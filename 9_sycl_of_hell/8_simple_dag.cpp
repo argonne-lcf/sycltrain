@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <numeric>
 #include <CL/sycl.hpp>
 
 template <typename TAccessorW, typename TAccessorR>
@@ -21,10 +22,10 @@ void f_copy(cl::sycl::handler& cgh, int global_range, cl::sycl::buffer<cl::sycl:
 
 int main(int argc, char** argv) {
 
-   const auto global_range =  (size_t) atoi(argv[1]);
-
-   // Crrate array
-   std::vector<int> A(global_range, 0);
+  const auto global_range =  (size_t) atoi(argv[1]);
+  std::cout << "Running a linear dag. Output should start at 3" << std::endl;
+  std::vector<int> A(global_range);
+  std::iota (std::begin(A), std::end(A), 0);
 
   // Selectors determine which device kernels will be dispatched to.
   cl::sycl::default_selector selector;
@@ -37,7 +38,8 @@ int main(int argc, char** argv) {
   //   _      __ 
   //  | \ /\ /__ 
   //  |_//--\\_| 
- 
+
+  // A -> B -> C -> A 
 
   // Create buffer
   cl::sycl::buffer<cl::sycl::cl_int, 1> bufferA(A.data(), global_range);
@@ -48,9 +50,14 @@ int main(int argc, char** argv) {
   myQueue.submit(std::bind(f_copy, std::placeholders::_1, global_range, bufferC, bufferB));
   myQueue.submit(std::bind(f_copy, std::placeholders::_1, global_range, bufferA, bufferC));
   }  // End of scope, wait for the queued work to stop.
+
+
+  std::for_each(A.begin(), A.end(), [idx = 0] (int v) mutable {
+    std::cout<< "A[ " << idx <<" ] = " << v << std::endl ;
+    assert(v == idx+3);
+    ++idx;
+  });
  
- for (size_t i = 0; i < global_range; i++)
-        std::cout<< "A[ " << i <<" ] = " << A[i] << std::endl;
   return 0;
 }
 

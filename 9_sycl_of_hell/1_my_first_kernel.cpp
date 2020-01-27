@@ -18,8 +18,11 @@ int main() {
                                     
   //Create a command_group to issue command to the group
   myQueue.submit([&](cl::sycl::handler& cgh) {
+    // Create a output stream
+    cl::sycl::stream cout(1024, 256, cgh);
+
     cgh.single_task<class hello_world>([=]() {
-        printf("Hello, World!\n");
+    cout << "Hello, World!" << cl::sycl::endl;
     }); // End of the kernel function
   }); // End of the queue commands 
   }  // End of scope, wait for the queued work to stop. 

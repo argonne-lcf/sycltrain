@@ -1,13 +1,12 @@
-CC=clang++
-#Yes. module show dpcc to know why
-CCFLAGS=-std=c++17 -fsycl -lOpenCL
+CC=dpcpp
+CCFLAGS= -std=c++17 
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
 
 all: $(PRGS) 
 %: %.cpp
-	$(CC) -o $@ $^ $(CCFLAGS)
+	-$(CC) -o $@ $^ $(CCFLAGS)
 
 clean:
 	rm -f $(PRGS)

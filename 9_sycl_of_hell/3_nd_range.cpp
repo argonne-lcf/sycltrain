@@ -15,12 +15,16 @@ int main(int argc, char** argv) {
             << myQueue.get_device().get_info<cl::sycl::info::device::name>()
             << "\n";
 
+// ._   _|        ._ _. ._   _   _
+// | | (_|        | (_| | | (_| (/_
+//           __              _|
+
+
   //Create a command_group to issue command to the group
   myQueue.submit([&](cl::sycl::handler& cgh) {
-                                 
-// ._   _|        ._ _. ._   _   _  
-// | | (_|        | (_| | | (_| (/_ 
-//           __              _|     
+
+    // Create a output stream (lot of display, lot of number)
+    cl::sycl::stream cout(10240, 2560, cgh);
 
     // nd_range, geneate a nd_item who allow use to query loop dispach information
     cgh.parallel_for<class hello_world>(cl::sycl::nd_range<1>{cl::sycl::range<1>(global_range), 
@@ -32,8 +36,12 @@ int main(int argc, char** argv) {
         const int local_size = idx.get_local_range(0);
         const int group_rank = idx.get_group(0);
         const int group_size = idx.get_group_range(0); 
-  
-       printf("Hello world: World rank/size: %d / %d. Local rank/size: %d / %d  Group rank/size: %d / %d \n", world_rank, work_size, local_rank, local_size, group_rank, group_size);
+
+
+       cout<< "Hello world: World rank/size: " <<  world_rank << " / " << work_size  << 
+              ". Local rank/size: "             << local_rank << " / " << local_size << 
+              ". Group rank/size: "             << group_rank << " / " << group_size << 
+              cl::sycl::endl;
 
     }); // End of the kernel function
   }); // End of the queue commands 
