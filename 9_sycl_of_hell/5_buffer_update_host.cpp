@@ -58,7 +58,9 @@ int main(int argc, char **argv) {
             accessorA[world_rank] = world_rank;
           }); // End of the kernel function
     });       // End of the queue commands
-  }           // End of scope, wait for the queued work to stop.
+  }           // End of scope.
+    // The queue destructor will be called => force to wait for all the job to
+    // finish The buffer destructor will be called => Force a update to the host
 
   for (size_t i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;

@@ -4,6 +4,21 @@
 
 namespace sycl = cl::sycl;
 
+template <class T> class Matrix {
+public:
+  Matrix(size_t rows, size_t cols)
+      : mRows(rows), mCols(cols), mData(rows * cols){};
+  T &operator()(size_t i, size_t j) { return mData[i * mCols + j]; };
+  T operator()(size_t i, size_t j) const { return mData[i * mCols + j]; };
+  T *data() { return mData.data(); };
+
+private:
+  size_t mRows;
+  size_t mCols;
+  std::vector<T> mData;
+};
+
+// Inspired by Codeplay compute cpp hello-world
 int main(int argc, char **argv) {
 
   //  _                ___
@@ -29,8 +44,7 @@ int main(int argc, char **argv) {
   // |_) |_| |   | (/_ |
   //
 
-  // Crrate array
-  std::vector<int> A(global_range);
+  Matrix<int> A(global_range, global_range);
 
   // Selectors determine which device kernels will be dispatched to.
   sycl::default_selector selector;
@@ -38,7 +52,8 @@ int main(int argc, char **argv) {
   {
     // Create sycl buffer.
     // Trivia: What happend if we create the buffer in the outer scope?
-    sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
+    sycl::buffer<int, 2> bufferA(A.data(),
+                                 sycl::range<2>(global_range, global_range));
 
     sycl::queue myQueue(selector);
     std::cout << "Running on "
@@ -51,16 +66,20 @@ int main(int argc, char **argv) {
       auto accessorA =
           bufferA.get_access<sycl::access::mode::discard_write>(cgh);
       // Nd range allow use to access information
+      sycl::range<2> global(global_range, global_range);
+
       cgh.parallel_for<class hello_world>(
-          sycl::range<1>{sycl::range<1>(global_range)},
-          [=](sycl::nd_item<1> idx) {
-            const int world_rank = idx.get_global_id(0);
-            accessorA[world_rank] = world_rank;
+          sycl::range<2>(global), [=](sycl::nd_item<2> idx) {
+            const int i = idx.get_global_id(0);
+            const int j = idx.get_global_id(1);
+            const int n = idx.get_global_linear_id();
+            accessorA[i][j] = n;
           }); // End of the kernel function
     });       // End of the queue commands
   }           // End of scope, wait for the queued work to stop.
 
   for (size_t i = 0; i < global_range; i++)
-    std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
+    for (size_t j = 0; j < global_range; j++)
+      std::cout << "A(" << i << "," << j << ") = " << A(i, j) << std::endl;
   return 0;
 }

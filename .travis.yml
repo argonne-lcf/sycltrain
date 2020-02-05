@@ -1,0 +1,6 @@
+services:
+  - docker
+
+before_install:
+- docker pull "intel/oneapi-hpckit"
+- docker run -e http_proxy="$http_proxy" -e https_proxy="$https_proxy" -it "intel/oneapi-hpckit"
