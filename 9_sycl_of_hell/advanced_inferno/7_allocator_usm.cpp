@@ -41,9 +41,7 @@ int main(int argc, char **argv) {
             << myQueue.get_device().get_info<sycl::info::device::name>()
             << "\n";
 
-// When using the std::vector directly
-// `error: cannot assign to return value because function 'operator[]' returns a
-// const value`
+// A vector is not trivialy copyable
 #ifdef workaround
   auto *A_p = A.data();
 #else

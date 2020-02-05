@@ -32,13 +32,14 @@ int main(int argc, char **argv) {
   // Crrate array
   std::vector<int> A(global_range);
 
+  sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
+
   // Selectors determine which device kernels will be dispatched to.
   sycl::default_selector selector;
   // Create your own or use `{cpu,gpu,accelerator}_selector`
   {
     // Create sycl buffer.
     // Trivia: What happend if we create the buffer in the outer scope?
-    sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
 
     sycl::queue myQueue(selector);
     std::cout << "Running on "
@@ -58,6 +59,8 @@ int main(int argc, char **argv) {
             accessorA[world_rank] = world_rank;
           }); // End of the kernel function
     });       // End of the queue commands
+
+    cgh.update_host(bufferA)
   }           // End of scope.
     // The queue destructor will be called => force to wait for all the job to
     // finish The buffer destructor will be called => Force a update to the host
