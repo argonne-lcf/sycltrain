@@ -19,6 +19,7 @@ using namespace cl::sycl;
 #define N        SIZE/4
 #define P        SIZE/2
 
+
 // /**
 //  * Verify results between any two matrices
 //  */
@@ -112,9 +113,11 @@ int main() {
     }
   }
 
+#ifdef mkl_host
   // Resultant matrix: C_cblas
   cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-	      m, n, k, alpha, A, ldA, B, ldB, beta, C_cblas, ldC);
+  	          m, n, k, alpha, A, ldA, B, ldB, beta, C_cblas, ldC);
+#endif
 
   // Resultant matrix: C_onemkl
   auto asyncHandler = [&](cl::sycl::exception_list eL) {
@@ -148,11 +151,16 @@ int main() {
     std::cout << "\t\tSYCL exception during GEMM\n" << e.what() << std::endl << "OpenCL status: " << e.get_cl_code() << std::endl;
   }
   
-  int result_cblas, result_serial;
-  std::cout << "Verify results between OneMKL & CBLAS: ";
-  result_cblas = VerifyResult(C_onemkl, C_cblas);
+
+  int result_serial;
   std::cout << "Verify results between OneMKL & Serial: ";  
   result_serial = VerifyResult(C_onemkl, C_serial);
+
+#ifdef mkl_host
+  int result_cblas;
+  std::cout << "Verify results between OneMKL & CBLAS: ";
+  result_cblas = VerifyResult(C_onemkl, C_cblas);
+#endif
 
   delete[] A;
   delete[] B;
@@ -162,4 +170,3 @@ int main() {
 
   return 0;
 }
-
