@@ -60,7 +60,11 @@ int main(int argc, char **argv) {
           }); // End of the kernel function
     });       // End of the queue commands
 
-    cgh.update_host(bufferA)
+    myQueue.submit([&](sycl::handler &cgh) {
+      // Create an accesor for the sycl buffer. Trust me, use auto.
+      auto accessorA = bufferA.get_access<sycl::access::mode::discard_write>(cgh);
+      cgh.update_host(accessorA);
+    });
   }           // End of scope.
     // The queue destructor will be called => force to wait for all the job to
     // finish The buffer destructor will be called => Force a update to the host
