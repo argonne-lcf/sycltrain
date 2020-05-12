@@ -1,12 +1,12 @@
-CC=dpcpp
-CCFLAGS= -std=c++17 
+CXX ?= dpcpp
+CCFLAGS ?= -std=c++17 
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
 
 all: $(PRGS) 
 %: %.cpp
-	-$(CC) -o $@ $^ $(CCFLAGS)
+	-$(CXX) $(CCFLAGS) -o $@ $^
 
 clean:
 	rm -f $(PRGS)

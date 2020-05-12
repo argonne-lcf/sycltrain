@@ -34,3 +34,12 @@
 # slide artefacts
 slides/*.pdf
 slides/*.html
+
+#Binary
+./9_sycl_of_hell/advanced_inferno/6_force_allocate
+./9_sycl_of_hell/1_my_first_kernel
+./9_sycl_of_hell/0_tiny_sycl_info
+./9_sycl_of_hell/6_error_handling
+./9_sycl_of_hell/2_parallel_for
+./9_sycl_of_hell/3_nd_range
+./9_sycl_of_hell/8_simple_dag
