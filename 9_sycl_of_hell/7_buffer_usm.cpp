@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
       sycl::malloc_shared(global_range * sizeof(int), dev, ctex));
 
   // Advise runtime how memory will be used
-  auto e = myQueue.mem_advise(A, global_range * sizeof(int), 0);
+  auto e = myQueue.mem_advise(A, global_range * sizeof(int), PI_MEM_ADVICE_SET_NON_ATOMIC_MOSTLY);
   e.wait();
 
   std::cout << "Running on "
