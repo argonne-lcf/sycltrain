@@ -9,12 +9,13 @@ public:
   generator_kernel_hw(sycl::stream cout) : m_cout(cout) {}
 
   void operator()(sycl::id<1> idx) {
-    m_cout << "Hello, World Functor: World rank " << idx << sycl::endl;
+    m_cout << "Hello, World Functor: World rank " << idx[0] << sycl::endl;
   }
 
 private:
   sycl::stream m_cout;
 };
+
 int main(int argc, char **argv) {
 
   //  _                ___

@@ -45,9 +45,10 @@ int main(int argc, char **argv) {
       // for(int idx[0]=0; idx[0]++; idx[0]< global_range)
       cgh.parallel_for<class hello_world>(
           sycl::range<1>(global_range), [=](sycl::id<1> idx) {
-            cout << "Hello, World: World rank " << idx << sycl::endl;
+            cout << "Hello, World: World rank " << idx[0] << sycl::endl;
           }); // End of the kernel function
-    });       // End of the queue commands
-  }           // End of scope, wait for the queued work to stop.
+    });       // End of the queue commands.
+  }           // End of scope.Queue destruction will be called. W
+              // This will wait for the queued work to stop.
   return 0;
 }

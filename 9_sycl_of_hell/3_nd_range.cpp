@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
                  << group_size << sycl::endl;
           }); // End of the kernel function
     });       // End of the queue commands
-  }           // End of scope, wait for the queued work to stop.
+  }           // End of scope, destructor, wait for the queued work to stop.
               // Can also use  myQueue.wait_and_throw();
   return 0;
 }
