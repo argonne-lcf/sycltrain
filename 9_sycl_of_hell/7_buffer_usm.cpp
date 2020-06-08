@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
     // No accessor needed!
     cgh.parallel_for<class hello_world>(
         sycl::range<1>{sycl::range<1>(global_range)},
-        [=](sycl::nd_item<1> idx) {
-          const int world_rank = idx.get_global_id(0);
+        [=](sycl::item<1> id) {
+          const int world_rank=id.get_id();
           A[world_rank] = world_rank;
         }); // End of the kernel function
   });       // End of the queue commands

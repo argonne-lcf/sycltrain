@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
   //
 
   // Crrate array
-  std::vector<int> A(global_range);
-  std::vector<int> A_atom(global_range);
+  std::vector<int> A(1);
+  std::vector<int> A_atom(1);
 
   // Selectors determine which device kernels will be dispatched to.
   sycl::default_selector selector;
@@ -50,26 +50,21 @@ int main(int argc, char **argv) {
     myQueue.submit([&](sycl::handler &cgh) {
       // Create an accesor for the sycl buffer. Trust me, use auto.
       auto accessorA = bufferA.get_access<sycl::access::mode::read_write>(cgh);
-      auto accessorA_atom =
-          bufferA_atom.get_access<sycl::access::mode::atomic>(cgh);
-      // Nd range allow use to access information
+      auto accessorA_atom =  bufferA_atom.get_access<sycl::access::mode::atomic>(cgh);
+      // Range allow use to access information
       cgh.parallel_for<class hello_world>(
-          sycl::range<1>{sycl::range<1>(global_range)},
-          [=](sycl::nd_item<1> idx) {
-            const int world_rank = idx.get_global_id(0);
+          sycl::range<1>(global_range),
+          [=](sycl::id<1> idx) {
             accessorA[0] = accessorA[0] + 1;
             accessorA_atom[0].fetch_add(1);
           }); // End of the kernel function
     });       // End of the queue commands
   }           // End of scope, wait for the queued work to stop.
 
-  std::cout << "Index "
-            << "Non Atomic "
-            << "Atomic" << std::endl;
-  for (size_t i = 0; i < global_range; i++)
-    std::cout << "A[ " << i << " ] : " << A[i] << " -- " << A_atom[i]
-              << std::endl;
+  std::cout <<"Counter incrememented " << global_range << " time " << std::endl; 
+  std::cout << "Atomic Increment " << A_atom[0] << std::endl;
+  std::cout << "Race condition Increment " << A[0] << std::endl;
 
-  assert(A_atom[0] == A.size());
+  assert(A_atom[0] == global_range );
   return 0;
 }

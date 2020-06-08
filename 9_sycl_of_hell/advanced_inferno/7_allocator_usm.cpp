@@ -4,8 +4,6 @@
 
 namespace sycl = cl::sycl;
 
-#define workaround
-
 int main(int argc, char **argv) {
 
   //  _                ___
@@ -42,20 +40,15 @@ int main(int argc, char **argv) {
             << "\n";
 
 // A vector is not trivialy copyable
-#ifdef workaround
   auto *A_p = A.data();
-#else
-  auto A_p = A;
-#endif
 
   // Create a command_group to issue command to the group
   myQueue.submit([&](sycl::handler &cgh) {
     // No accessor needed!
     cgh.parallel_for<class hello_world>(
         sycl::range<1>{sycl::range<1>(global_range)},
-        [=](sycl::nd_item<1> idx) {
-          const int world_rank = idx.get_global_id(0);
-          A_p[world_rank] = world_rank;
+        [=](sycl::id<1> idx) {
+          A_p[idx] = idx[0];
         }); // End of the kernel function
   });       // End of the queue commands
   myQueue.wait();

@@ -52,10 +52,10 @@ int main(int argc, char **argv) {
           bufferA.get_access<sycl::access::mode::discard_write>(cgh);
       // Nd range allow use to access information
       cgh.parallel_for<class hello_world>(
-          sycl::range<1>{sycl::range<1>(global_range)},
-          [=](sycl::nd_item<1> idx) {
-            const int world_rank = idx.get_global_id(0);
-            accessorA[world_rank] = world_rank;
+          sycl::range<1>(global_range),
+          [=](sycl::id<1> idx) {
+            // id have some 'usefull' overwrite
+            accessorA[idx] = idx;
           }); // End of the kernel function
     });       // End of the queue commands
   }           // End of scope, wait for the queued work to stop.
