@@ -9,8 +9,7 @@ addons:
         - sourceline: 'deb https://apt.repos.intel.com/oneapi all main'
           key_url: 'https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB'
         packages:
-        - intel-oneapi-icc
-        - intel-oneapi-ifort
+        - intel-basekit
 
 script:   
     - cd /9_sycl_of_hell; CXX='dpcpp' make all
