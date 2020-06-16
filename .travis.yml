@@ -13,6 +13,6 @@ addons:
         - intel-oneapi-ifort
 
 script:   
-    - cd /9_sycl_of_hell; make
+    - cd /9_sycl_of_hell; CXX='dpcpp' make all
 
 
