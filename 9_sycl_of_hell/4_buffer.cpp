@@ -48,12 +48,12 @@ int main(int argc, char **argv) {
     // Create a command_group to issue command to the group
     myQueue.submit([&](sycl::handler &cgh) {
       // Create an accesor for the sycl buffer. Trust me, use auto.
-      auto accessorA =
-          bufferA.get_access<sycl::access::mode::discard_write>(cgh);
-      // Nd range allow use to access information
+      auto accessorA = bufferA.get_access<sycl::access::mode::discard_write>(cgh);
+      // Submit the kernel
       cgh.parallel_for<class hello_world>(
-          sycl::range<1>(global_range),
+          sycl::range<1>(global_range), 
           [=](sycl::id<1> idx) {
+            // Use the accesor
             // id have some 'usefull' overwrite
             accessorA[idx] = idx;
           }); // End of the kernel function

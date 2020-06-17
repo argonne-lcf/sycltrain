@@ -14,9 +14,7 @@ int main(int argc, char **argv) {
 
   options.add_options()("h,help", "Print help")(
       "g,grange", "Global Range", cxxopts::value<int>()->default_value("1"))(
-      "l,lrange", "Local Range", cxxopts::value<int>()->default_value("1"))
-
-      ;
+      "l,lrange", "Local Range", cxxopts::value<int>()->default_value("1"));
 
   auto result = options.parse(argc, argv);
 
@@ -40,7 +38,7 @@ int main(int argc, char **argv) {
     sycl::queue myQueue(selector);
     std::cout << "Running on "
               << myQueue.get_device().get_info<sycl::info::device::name>()
-              << "\n";
+              << std::endl;
 
     // Create a command_group to issue command to the group
     myQueue.submit([&](sycl::handler &cgh) {

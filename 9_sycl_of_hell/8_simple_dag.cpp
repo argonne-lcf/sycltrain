@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
   } // End of scope, wait for the queued work to stop.
 
   std::for_each(A.begin(), A.end(), [idx = 0](int v) mutable {
-    std::cout << "A[ " << idx << " ] = " << v << std::endl;
+    std::cout << "A[ " << idx << " ] = " << v << " Expected " << idx + 3 << std::endl;
     assert(v == idx + 3);
     ++idx;
   });

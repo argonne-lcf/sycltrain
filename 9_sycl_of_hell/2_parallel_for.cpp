@@ -32,20 +32,18 @@ int main(int argc, char **argv) {
   // Selectors determine which device kernels will be dispatched to.
   sycl::default_selector selector;
   {
-
     sycl::queue myQueue(selector);
     std::cout << "Running on "
               << myQueue.get_device().get_info<sycl::info::device::name>()
-              << "\n";
-
+              << std::endl;
     // Create a command_group to issue command to the group
     myQueue.submit([&](sycl::handler &cgh) {
       sycl::stream cout(1024, 256, cgh);
       // #pragma omp parallel for
-      // for(int idx[0]=0; idx[0]++; idx[0]< global_range)
       cgh.parallel_for<class hello_world>(
+          // for(int idx=0; idx++; idx < global_range)
           sycl::range<1>(global_range), [=](sycl::id<1> idx) {
-            cout << "Hello, World: World rank " << idx[0] << sycl::endl;
+            cout << "Hello, World: World rank " << idx << sycl::endl;
           }); // End of the kernel function
     });       // End of the queue commands.
   }           // End of scope.Queue destruction will be called. W

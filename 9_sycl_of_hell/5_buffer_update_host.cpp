@@ -29,9 +29,10 @@ int main(int argc, char **argv) {
   // |_) |_| |   | (/_ |
   //
 
-  // Crrate array
+  // Create array
   std::vector<int> A(global_range);
-
+  // The buffer is created outside of the scope
+  // Need to manualy update it
   sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
 
   // Selectors determine which device kernels will be dispatched to.
@@ -57,15 +58,14 @@ int main(int argc, char **argv) {
            accessorA[idx]=idx;
           }); // End of the kernel function
     });       // End of the queue commands
-
+    
+    // Now update the host buffer 
     myQueue.submit([&](sycl::handler &cgh) {
-      // Create an accesor for the sycl buffer. Trust me, use auto.
       auto accessorA = bufferA.get_access<sycl::access::mode::discard_write>(cgh);
       cgh.update_host(accessorA);
     });
-  }           // End of scope.
-    // The queue destructor will be called => force to wait for all the job to
-    // finish The buffer destructor will be called => Force a update to the host
+  } // End of scope.
+    // The queue destructor will be called => force to wait for all the job to finish
 
   for (size_t i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
