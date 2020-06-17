@@ -12,6 +12,6 @@ addons:
         - intel-oneapi-dpcpp-compiler
 
 script:   
-    - cd 9_sycl_of_hell; CXX=dpcpp make -i
+    - cd 9_sycl_of_hell; CXX=dpcpp make --keep-going
 
 
