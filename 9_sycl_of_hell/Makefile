@@ -5,10 +5,20 @@ MAKEFLAGS = 'i'
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
+RUN :=  $(addprefix run_, $(PRGS))
 
-all: $(PRGS) 
+.PHONY: run_all
+run_all: $(sort $(RUN))
+
+.PHONY: all
+all: $(PRGS)
+
 %: %.cpp
 	$(CXX) $(CCFLAGS) -o $@ $^
 
+run_%:%
+	./$^
+
+.PHONY: clean
 clean:
 	rm -f $(PRGS)
