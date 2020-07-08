@@ -1,5 +1,5 @@
-CC=clang++
-CCFLAGS= -std=c++17 -fsycl -lOpenCL 
+CC ?= dpcpp 
+CCFLAGS ?= -std=c++17
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))

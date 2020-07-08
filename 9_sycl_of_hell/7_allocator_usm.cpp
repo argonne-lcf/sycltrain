@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     cgh.parallel_for<class hello_world>(
         sycl::range<1>{sycl::range<1>(global_range)},
         [=](sycl::id<1> idx_id) {
-	  const int idx = idx_id[0];
+          const int idx = idx_id[0];
           A_p[idx] = idx;
         }); // End of the kernel function
   });       // End of the queue commands

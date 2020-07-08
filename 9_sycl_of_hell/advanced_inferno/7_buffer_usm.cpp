@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
         sycl::range<1>{sycl::range<1>(global_range)},
         [=](sycl::item<1> id) {
           const sycl::id<1> world_rank_id=id.get_id();
-	  const int world_rank = world_rank_id[0];
+          const int world_rank = world_rank_id[0];
           A[world_rank] = world_rank;
         }); // End of the kernel function
   });       // End of the queue commands
