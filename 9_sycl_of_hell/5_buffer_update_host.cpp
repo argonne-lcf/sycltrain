@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
       cgh.parallel_for<class hello_world>(
           sycl::range<1>{sycl::range<1>(global_range)},
           [=](sycl::id<1> idx) {
-           accessorA[idx]=idx;
+           accessorA[idx]=idx[0];
           }); // End of the kernel function
     });       // End of the queue commands
     

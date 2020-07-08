@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
           [=](sycl::id<1> idx) {
             // Use the accesor
             // id have some 'usefull' overwrite
-            accessorA[idx] = idx;
+            accessorA[idx] = idx[0];
           }); // End of the kernel function
     });       // End of the queue commands
   }           // End of scope, wait for the queued work to stop.

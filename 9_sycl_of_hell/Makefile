@@ -1,5 +1,5 @@
 CXX ?= dpcpp
-CCFLAGS ?= -std=c++17 
+CCFLAGS ?= -std=c++17
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
