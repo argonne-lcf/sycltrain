@@ -6,7 +6,8 @@
 
 namespace sycl = cl::sycl;
 
-template <typename TAccessorW, typename TAccessorR> class memcopy_kernel {
+template <typename TAccessorW, typename TAccessorR>
+class memcopy_kernel {
 public:
   memcopy_kernel(TAccessorW accessorW_, TAccessorR accessorR_)
       : accessorW{accessorW_}, accessorR{accessorR_} {}
