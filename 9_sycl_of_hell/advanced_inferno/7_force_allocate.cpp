@@ -10,7 +10,7 @@ void force_allocate(sycl::buffer<T, I> buffer, sycl::queue myQueue) {
 
   // Create a device accesors and use it. This will force the allocation
   myQueue.submit([&](sycl::handler &cgh) {
-    sycl::accessor<T, I, sycl::access::mode::discard_write, Q> accessorA(
+    sycl::accessor<T, I, sycl::access::mode::write, Q> accessorA(
         buffer, cgh, buffer.get_size());
     cgh.single_task<class allocate>([=]() { accessorA[0]; });
   });

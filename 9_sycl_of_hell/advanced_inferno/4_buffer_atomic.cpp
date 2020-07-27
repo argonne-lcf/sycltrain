@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
       // Range allow use to access information
       cgh.parallel_for<class hello_world>(
           sycl::range<1>(global_range),
-          [=](sycl::id<1> idx) {
+          [=](sycl::id<1> _) {
             accessorA[0] = accessorA[0] + 1;
             accessorA_atom[0].fetch_add(1);
           }); // End of the kernel function
