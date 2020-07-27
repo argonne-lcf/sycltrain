@@ -1,4 +1,4 @@
-#include <argparse.hpp>
+#include "argparse.hpp"
 #include <CL/sycl.hpp>
 
 namespace sycl = cl::sycl;
@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 
   program.add_argument("-l","--local")
    .help("Local Range")
-   .default_value(1)
+   .default_value(2)
    .action([](const std::string& value) { return std::stoi(value); });
 
   try {
