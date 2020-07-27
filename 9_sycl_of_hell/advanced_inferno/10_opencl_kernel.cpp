@@ -19,7 +19,8 @@ int main() {
               << "\n";
 
     sycl::program p(myQueue.get_context());
-    p.build_with_source(R"EOL(__kernel void hello_world() {printf("Hello world\n");} )EOL", "");
+    // build_with_source may take an aditioanl argument to pass compile flags
+    p.build_with_source(R"EOL(__kernel void hello_world() {printf("Hello world\n");} )EOL");
         
     //  _               _                          
     // / \ ._   _  ._  /  |    |/  _  ._ ._   _  | 
