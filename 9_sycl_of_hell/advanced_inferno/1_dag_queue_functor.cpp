@@ -1,4 +1,4 @@
-#include "cxxopts.hpp"
+#include <argparse.hpp>
 #include <CL/sycl.hpp>
 #include <iostream>
 #include <numeric>
@@ -35,14 +35,23 @@ int main(int argc, char **argv) {
   // |_) _. ._ _  _     |  ._  ._     _|_
   // |  (_| | _> (/_   _|_ | | |_) |_| |_
   //
+  argparse::ArgumentParser program("1_dag_queue_functor");
 
-  cxxopts::Options options("8_simple_dag", " How to use dag ");
+  program.add_argument("-g","--global")
+   .help("Global Range")
+   .default_value(1)
+   .action([](const std::string& value) { return std::stoi(value); });
 
-  options.add_options()("h,help", "Print help")(
-      "g,grange", "Global Range", cxxopts::value<int>()->default_value("1"));
+  try {
+    program.parse_args(argc, argv);
+  }
+  catch (const std::runtime_error& err) {
+    std::cout << err.what() << std::endl;
+    std::cout << program;
+    exit(0);
+  }
 
-  auto result = options.parse(argc, argv);
-  const auto global_range = result["grange"].as<int>();
+  const auto global_range = program.get<int>("-g");
 
   std::cout << "Running a linear dag. Output should start at 3" << std::endl;
   std::vector<int> A(global_range);

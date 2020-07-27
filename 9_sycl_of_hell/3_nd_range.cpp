@@ -1,4 +1,4 @@
-#include "cxxopts.hpp"
+#include <argparse.hpp>
 #include <CL/sycl.hpp>
 
 namespace sycl = cl::sycl;
@@ -9,22 +9,29 @@ int main(int argc, char **argv) {
   // |_) _. ._ _  _     |  ._  ._     _|_
   // |  (_| | _> (/_   _|_ | | |_) |_| |_
   //
+  argparse::ArgumentParser program("3_nd_range");
 
-  cxxopts::Options options("3_nd_range", " How to use 'nd_range' ");
+  program.add_argument("-g","--global")
+   .help("Global Range")
+   .default_value(1)
+   .action([](const std::string& value) { return std::stoi(value); });
 
-  options.add_options()("h,help", "Print help")(
-      "g,grange", "Global Range", cxxopts::value<int>()->default_value("1"))(
-      "l,lrange", "Local Range", cxxopts::value<int>()->default_value("1"));
+  program.add_argument("-l","--local")
+   .help("Local Range")
+   .default_value(1)
+   .action([](const std::string& value) { return std::stoi(value); });
 
-  auto result = options.parse(argc, argv);
-
-  if (result.count("help")) {
-    std::cout << options.help({"", "Group"}) << std::endl;
+  try {
+    program.parse_args(argc, argv);
+  }
+  catch (const std::runtime_error& err) {
+    std::cout << err.what() << std::endl;
+    std::cout << program;
     exit(0);
   }
 
-  const auto global_range = result["grange"].as<int>();
-  const auto local_range = result["lrange"].as<int>();
+  const auto global_range = program.get<int>("-g");
+  const auto local_range = program.get<int>("-l");
 
   // ._   _|        ._ _. ._   _   _
   // | | (_|        | (_| | | (_| (/_

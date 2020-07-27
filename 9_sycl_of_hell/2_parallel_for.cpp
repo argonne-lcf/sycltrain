@@ -1,4 +1,4 @@
-#include "cxxopts.hpp"
+#include <argparse.hpp>
 #include <CL/sycl.hpp>
 
 namespace sycl = cl::sycl;
@@ -9,22 +9,23 @@ int main(int argc, char **argv) {
   // |_) _. ._ _  _     |  ._  ._     _|_
   // |  (_| | _> (/_   _|_ | | |_) |_| |_
   //                           |
+  argparse::ArgumentParser program("2_parallel_for");
 
-  cxxopts::Options options("2_parallel_for",
-                           " How to use 'parallel_for' and 'range' ");
+  program.add_argument("-g","--global")
+   .help("Global Range")
+   .default_value(1)
+   .action([](const std::string& value) { return std::stoi(value); });
 
-  options.add_options()("h,help", "Print help")(
-      "g,grange", "Global Range", cxxopts::value<int>()->default_value("1"));
-
-  auto result = options.parse(argc, argv);
-
-  if (result.count("help")) {
-    std::cout << options.help({"", "Group"}) << std::endl;
+  try {
+    program.parse_args(argc, argv);
+  }
+  catch (const std::runtime_error& err) {
+    std::cout << err.what() << std::endl;
+    std::cout << program;
     exit(0);
   }
 
-  const auto global_range = result["grange"].as<int>();
-
+  const auto global_range = program.get<int>("-g");
   //  _                             _
   // |_) _. ._ ._ _. | | |  _  |   |_ _  ._
   // |  (_| |  | (_| | | | (/_ |   | (_) |
