@@ -14,4 +14,4 @@ make -j 7
 - `buffer_update_host`  How to data-transfer explicitly (`./4_buffer -g 8`)
 - `error_handling` How to raise Error (`./6_error_handling  1 8 `)
 - `buffer_usm` How to use one flavor of Unified Shared Memory  (`./7_buffer_usm 8 2`)
-- `simple dag` Demonstration of a DAG. Warning lot of C++ (`./8_simple_dag 10`)
+- `event` How to use event to get profiling information (`/8_event`)

@@ -26,11 +26,11 @@ int main() {
     // Use A lambda to generate the control group handler
     myQueue.submit([&](sycl::handler &cgh) {
       // Create a output stream
-      sycl::stream cout(1024, 256, cgh);
+      sycl::stream sout(1024, 256, cgh);
 
       // Submit a unique task, using a lambda
       cgh.single_task<class hello_world>([=]() {
-        cout << "Hello, World!" << sycl::endl;
+        sout << "Hello, World!" << sycl::endl;
       }); // End of the kernel function
     });   // End of the queue commands. The kernel is now submited
   } // End of scopes, the queue will be destroyed, trigering a synchronization

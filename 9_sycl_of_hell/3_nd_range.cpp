@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     // Create a command_group to issue command to the group
     myQueue.submit([&](sycl::handler &cgh) {
       // Create a output stream (lot of display, lot of number)
-      sycl::stream cout(10240, 2560, cgh);
+      sycl::stream sout(10240, 2560, cgh);
 
       // nd_range, geneate a nd_item who allow use to query loop dispach
       // information
@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
             const int group_rank = idx.get_group(0);
             const int group_size = idx.get_group_range(0);
 
-            cout << "Hello world: World rank/size: " << world_rank << " / "
+            sout << "Hello world: World rank/size: " << world_rank << " / "
                  << work_size << ". Local rank/size: " << local_rank << " / "
                  << local_size << ". Group rank/size: " << group_rank << " / "
                  << group_size << sycl::endl;
