@@ -24,6 +24,7 @@ int main() {
 
     // Create a command_group to issue command to the group.
     // Use A lambda to generate the control group handler
+    // Queue submision are asyncrhonous! (similar to OpenMP nowait)
     myQueue.submit([&](sycl::handler &cgh) {
       // Create a output stream
       sycl::stream sout(1024, 256, cgh);

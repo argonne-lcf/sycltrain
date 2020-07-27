@@ -25,7 +25,7 @@ int main() {
       std::cout << "-- Device: ";
       std::cout << dev.get_info<sycl::info::device::name>() << " ";
       std::cout << (dev.is_gpu() ? "is a gpu" : " is not a gpu") << std::endl;
-      // sycl::info::device::device_type exist, but do not overloead the <<
+      // sycl::info::device::device_type exist, but do not overload the <<
       // operator
     }
   }

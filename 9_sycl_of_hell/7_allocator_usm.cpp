@@ -52,6 +52,7 @@ int main(int argc, char **argv) {
           A_p[idx] = idx;
         }); // End of the kernel function
   });       // End of the queue commands
+  // Wait for the kernel to complete
   myQueue.wait();
 
   for (size_t i = 0; i < global_range; i++)

@@ -1,6 +1,7 @@
 #include "cxxopts.hpp"
 #include <CL/sycl.hpp>
 #include <vector>
+#include <algorithm>    // std::copy
 
 namespace sycl = cl::sycl;
 
@@ -34,14 +35,11 @@ int main(int argc, char **argv) {
   // The buffer is created outside of the scope
   // Need to manualy update it
   sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
-
+  
   // Selectors determine which device kernels will be dispatched to.
   sycl::default_selector selector;
   // Create your own or use `{cpu,gpu,accelerator}_selector`
   {
-    // Create sycl buffer.
-    // Trivia: What happend if we create the buffer in the outer scope?
-
     sycl::queue myQueue(selector);
     std::cout << "Running on "
               << myQueue.get_device().get_info<sycl::info::device::name>()
@@ -58,15 +56,19 @@ int main(int argc, char **argv) {
            accessorA[idx]=idx[0];
           }); // End of the kernel function
     });       // End of the queue commands
-    
+  
     // Now update the host buffer 
     myQueue.submit([&](sycl::handler &cgh) {
-      auto accessorA = bufferA.get_access<sycl::access::mode::discard_write>(cgh);
-      cgh.update_host(accessorA);
+      auto accessorA = bufferA.get_access<sycl::access::mode::read>(cgh);
+      cgh.copy(accessorA,A.data());
+      // If you can prove that `bufferA` have no internal copy, this should work too
+      //cgh.update_host(accessorA);
     });
-  } // End of scope.
-    // The queue destructor will be called => force to wait for all the job to finish
+    // The synchronization append at the buffer destructor, not the queue.
+    // Hence we need to explicitly wait
+    myQueue.wait();
 
+  } // End of scope.
   for (size_t i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
   return 0;
