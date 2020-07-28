@@ -4,10 +4,6 @@
 namespace sycl = cl::sycl;
 
 int main() {
-  // Selectors determine which device kernels will be dispatched to.
-  // Create your own or use `{cpu,gpu,accelerator}_selector`
-  //sycl::default_selector selector;
-
   sycl::queue myQueue;
   std::cout << "Running on "
             << myQueue.get_device().get_info<sycl::info::device::name>()
@@ -28,5 +24,14 @@ int main() {
       sout << "Hello, World!" << sycl::endl;
     }); // End of the kernel function
   });   // End of the queue commands. The kernel is now submited
+
+  myQueue.submit([&](sycl::handler &cgh) {
+    sycl::stream sout(1024, 256, cgh);
+    cgh.single_task<class hello_world>([=]() {
+      // Sorry if you don't have an utf8 terminal
+      sout << "你好世界" << sycl::endl;
+    });
+  });
+
   return 0;
 }

@@ -1,16 +1,25 @@
 #include "argparse.hpp"
 #include <CL/sycl.hpp>
-#include <vector>
+#include <math.h>   
 
 namespace sycl = cl::sycl;
+
+void bar(sycl::stream s, const sycl::id<1> idx)
+{
+    int repetition = idx[0] + 1;
+    while(repetition--){
+        s << "*" ;
+    }
+    s << sycl::endl;
+}
 
 int main(int argc, char **argv) {
 
   //  _                ___
   // |_) _. ._ _  _     |  ._  ._     _|_
   // |  (_| | _> (/_   _|_ | | |_) |_| |_
-  //
-  argparse::ArgumentParser program("7_allocator_usm");
+  //                           |
+  argparse::ArgumentParser program("2_parallel_for");
 
   program.add_argument("-g","--global")
    .help("Global Range")
@@ -27,36 +36,21 @@ int main(int argc, char **argv) {
   }
 
   const auto global_range = program.get<int>("-g");
+  //  _                             _
+  // |_) _. ._ ._ _. | | |  _  |   |_ _  ._
+  // |  (_| |  | (_| | | | (/_ |   | (_) |
 
   sycl::queue myQueue;
-
-  // Create usm allocator
-  sycl::usm_allocator<float, sycl::usm::alloc::shared> allocator(
-      myQueue.get_context(), myQueue.get_device());
-  // Allocate value
-  std::vector<float, decltype(allocator)> A(global_range, allocator);
-
   std::cout << "Running on "
             << myQueue.get_device().get_info<sycl::info::device::name>()
-            << "\n";
-
-  // A vector is not trivialy copyable
-  auto *A_p = A.data();
-
+            << std::endl;
   // Create a command_group to issue command to the group
   myQueue.submit([&](sycl::handler &cgh) {
-    // No accessor needed!
+    sycl::stream sout(1024, 256, cgh);
     cgh.parallel_for<class hello_world>(
-        sycl::range<1>{sycl::range<1>(global_range)},
-        [=](sycl::id<1> idx_id) {
-          const int idx = idx_id[0];
-          A_p[idx] = idx;
+        sycl::range<1>(global_range), [=](sycl::id<1> idx) {
+          bar(sout, idx);
         }); // End of the kernel function
-  });       // End of the queue commands
-  // Wait for the kernel to complete
-  myQueue.wait();
-
-  for (size_t i = 0; i < global_range; i++)
-    std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
+  });       // End of the queue commands.
   return 0;
 }

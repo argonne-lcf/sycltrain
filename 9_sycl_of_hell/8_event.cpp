@@ -2,14 +2,10 @@
 namespace sycl = cl::sycl;
 
 int main() {
-  sycl::default_selector selector;
-
-  {
-    // Enable the queue with profiling
-    sycl::queue myQueue{selector,sycl::property::queue::enable_profiling()};
-    std::cout << "Running on "
-              << myQueue.get_device().get_info<sycl::info::device::name>()
-              << "\n";
+  sycl::queue myQueue{sycl::property::queue::enable_profiling()};
+  std::cout << "Running on "
+            << myQueue.get_device().get_info<sycl::info::device::name>()
+            << "\n";
     //  _               
     // |_     _  ._ _|_ 
     // |_ \/ (/_ | | |_ 
@@ -32,7 +28,5 @@ int main() {
   // using implicit the `wait_for` sycl function.  
   auto ns =  e.get_profiling_info<sycl::info::event_profiling::command_end>() -e.get_profiling_info<sycl::info::event_profiling::command_start>();
   std::cout <<  "This kernel took " << ns  << " ns" << std::endl;
-
-  } // End of scopes, the queue will be destroyed, trigering a synchronization
   return 0;
 }

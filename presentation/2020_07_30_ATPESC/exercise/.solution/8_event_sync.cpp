@@ -1,16 +1,13 @@
 #include "argparse.hpp"
 #include <CL/sycl.hpp>
-#include <vector>
-
 namespace sycl = cl::sycl;
 
 int main(int argc, char **argv) {
-
   //  _                ___
   // |_) _. ._ _  _     |  ._  ._     _|_
   // |  (_| | _> (/_   _|_ | | |_) |_| |_
   //
-  argparse::ArgumentParser program("7_allocator_usm");
+  argparse::ArgumentParser program("4_buffer");
 
   program.add_argument("-g","--global")
    .help("Global Range")
@@ -28,23 +25,27 @@ int main(int argc, char **argv) {
 
   const auto global_range = program.get<int>("-g");
 
-  sycl::queue myQueue;
+  //  _               
+  // |_     _  ._ _|_ 
+  // |_ \/ (/_ | | |_ 
+  //                  
+
+  sycl::queue myQueue{sycl::property::queue::enable_profiling()};
+  std::cout << "Running on "
+            << myQueue.get_device().get_info<sycl::info::device::name>()
+            << "\n";
 
   // Create usm allocator
   sycl::usm_allocator<float, sycl::usm::alloc::shared> allocator(
       myQueue.get_context(), myQueue.get_device());
   // Allocate value
   std::vector<float, decltype(allocator)> A(global_range, allocator);
-
-  std::cout << "Running on "
-            << myQueue.get_device().get_info<sycl::info::device::name>()
-            << "\n";
-
+  
   // A vector is not trivialy copyable
   auto *A_p = A.data();
 
   // Create a command_group to issue command to the group
-  myQueue.submit([&](sycl::handler &cgh) {
+  cl::sycl::event e = myQueue.submit([&](sycl::handler &cgh) {
     // No accessor needed!
     cgh.parallel_for<class hello_world>(
         sycl::range<1>{sycl::range<1>(global_range)},
@@ -54,9 +55,10 @@ int main(int argc, char **argv) {
         }); // End of the kernel function
   });       // End of the queue commands
   // Wait for the kernel to complete
-  myQueue.wait();
-
+  e.wait();
   for (size_t i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
   return 0;
+
+
 }

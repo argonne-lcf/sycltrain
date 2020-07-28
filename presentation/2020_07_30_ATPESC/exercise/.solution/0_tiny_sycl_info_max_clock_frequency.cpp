@@ -1,7 +1,17 @@
 #include <CL/sycl.hpp>
 #include <vector>
+#include <optional>
 
 namespace sycl = cl::sycl;
+
+std::optional<unsigned int> get_max_clock_frequency_nothrow(sycl::device device){
+    try {
+        return device.template get_info<sycl::info::device::max_clock_frequency>();
+    } catch (...){
+        // Bad practice! Please catch all exeception individualy in production...
+        return {};
+    }
+}
 
 int main() {
 
@@ -23,9 +33,11 @@ int main() {
     for (const auto &dev : devices) {
       std::cout << "-- Device: "
                 << dev.get_info<sycl::info::device::name>() << " "
-                << (dev.is_gpu() ? "is a gpu" : " is not a gpu") << std::endl;
-      // sycl::info::device::device_type exist, but do not overload the <<
-      // operator
+                << (dev.is_gpu() ? "is a gpu" : " is not a gpu") << " ";
+      if (auto mhz = get_max_clock_frequency_nothrow(dev) ) {
+          std::cout << "running at " << *mhz << " Mhz";
+      }
+      std::cout << std:: endl;
+      }
     }
-  }
 }
