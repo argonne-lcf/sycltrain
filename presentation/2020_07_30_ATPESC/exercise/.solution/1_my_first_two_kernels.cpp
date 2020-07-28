@@ -27,7 +27,7 @@ int main() {
 
   myQueue.submit([&](sycl::handler &cgh) {
     sycl::stream sout(1024, 256, cgh);
-    cgh.single_task<class hello_world>([=]() {
+    cgh.single_task<class hello_world_2>([=]() {
       // Sorry if you don't have an utf8 terminal
       sout << "你好世界" << sycl::endl;
     });

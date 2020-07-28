@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
       auto accessorA = bufferA.get_access<sycl::access::mode::write>(cgh);
       auto accessorB = bufferB.get_access<sycl::access::mode::read>(cgh);
       // Submit the kernel
-      cgh.parallel_for<class hello_world>(
+      cgh.parallel_for<class hello_world_2>(
           sycl::range<1>(global_range),
           [=](sycl::id<1> idx) {
             accessorA[idx] = accessorB[idx];

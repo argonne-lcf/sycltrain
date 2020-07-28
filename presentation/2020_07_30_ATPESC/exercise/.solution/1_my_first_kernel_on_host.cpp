@@ -5,8 +5,8 @@ namespace sycl = cl::sycl;
 
 int main() {
   // Selectors determine which device kernels will be dispatched to.
-  // Create your own or use `{cpu,gpu,accelerator}_selector`
-  sycl::cpu_selector selector;
+  // Create your own or use `{host,cpu,gpu,accelerator}_selector`
+  sycl::host_selector selector;
 
   sycl::queue myQueue(selector);
   std::cout << "Running on "
