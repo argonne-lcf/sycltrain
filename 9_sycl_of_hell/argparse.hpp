@@ -1,3 +1,15 @@
+// commented out do_from_chars because only have gcc 7 on devcould
+/*
+u33405@s001-n180:~/sycltrain/9_sycl_of_hell$ dpcpp  -std=c++14 -o 2_parallel_for 2_parallel_for.cpp
+dpcpp  -std=c++14 -o 2_parallel_for 2_parallel_for.cpp
+In file included from 2_parallel_for.cpp:1:
+./argparse.hpp:34:10: fatal error: 'charconv' file not found
+#include <charconv>
+         ^~~~~~~~~~
+1 error generated.
+
+ */
+
 /*
   __ _ _ __ __ _ _ __   __ _ _ __ ___  ___
  / _` | '__/ _` | '_ \ / _` | '__/ __|/ _ \ Argument Parser for Modern C++
@@ -31,7 +43,7 @@ SOFTWARE.
 #include <algorithm>
 #include <any>
 #include <cerrno>
-#include <charconv>
+//#include <charconv>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
@@ -147,21 +159,21 @@ constexpr auto consume_hex_prefix(std::string_view s)
 
 template <class T, auto Param>
 inline auto do_from_chars(std::string_view s) -> T {
-  T x;
-  auto [first, last] = pointer_range(s);
-  auto [ptr, ec] = std::from_chars(first, last, x, Param);
-  if (ec == std::errc()) {
-    if (ptr == last)
-      return x;
-    else
-      throw std::invalid_argument{"pattern does not match to the end"};
-  } else if (ec == std::errc::invalid_argument) {
-    throw std::invalid_argument{"pattern not found"};
-  } else if (ec == std::errc::result_out_of_range) {
-    throw std::range_error{"not representable"};
-  } else {
-    return x; // unreachable
-  }
+  // T x;
+  // auto [first, last] = pointer_range(s);
+  // auto [ptr, ec] = std::from_chars(first, last, x, Param);
+  // if (ec == std::errc()) {
+  //   if (ptr == last)
+  //     return x;
+  //   else
+  //     throw std::invalid_argument{"pattern does not match to the end"};
+  // } else if (ec == std::errc::invalid_argument) {
+  //   throw std::invalid_argument{"pattern not found"};
+  // } else if (ec == std::errc::result_out_of_range) {
+  //   throw std::range_error{"not representable"};
+  // } else {
+  //   return x; // unreachable
+  // }
 }
 
 template <class T, auto Param = 0> struct parse_number {
