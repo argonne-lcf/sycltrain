@@ -145,7 +145,7 @@ int main() {
     buffer<double, 1> b{B, range<1>{N*P}};
     buffer<double, 1> c{C_onemkl, range<1>{M*P}};
 
-    mkl::blas::gemm(device_queue, transA, transB, n, m, k, alpha, b, ldB, a, ldA, beta, c, ldC); // row-major    
+    oneapi::mkl::blas::gemm(device_queue, transA, transB, n, m, k, alpha, b, ldB, a, ldA, beta, c, ldC); // row-major    
   }
   catch(cl::sycl::exception const& e) {
     std::cout << "\t\tSYCL exception during GEMM\n" << e.what() << std::endl << "OpenCL status: " << e.get_cl_code() << std::endl;
