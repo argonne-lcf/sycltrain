@@ -4,6 +4,14 @@
 
 namespace sycl = cl::sycl;
 
+// Note: please don't use std::atomic_ref<T> in the device-code
+template <typename T>
+using relaxed_atomic_ref =
+    sycl::intel::atomic_ref< T,
+                             sycl::intel::memory_order::relaxed,
+                             sycl::intel::memory_scope::device,
+                             sycl::access::address_space::global_space>;
+
 int main(int argc, char **argv) {
 
   //  _                ___
@@ -27,7 +35,7 @@ int main(int argc, char **argv) {
   }
 
   const auto global_range = program.get<int>("-g");
-  
+
 
   //  _       _   _
   // |_)    _|_ _|_ _  ._
@@ -61,12 +69,17 @@ int main(int argc, char **argv) {
           sycl::range<1>(global_range),
           [=](sycl::id<1> _) {
             accessorA[0] = accessorA[0] + 1;
-            accessorA_atom[0].fetch_add(1);
+
+            //accessorA_atom[0].fetch_add(1); // will be depricated by SYCL2020
+
+            auto atm = relaxed_atomic_ref<sycl::cl_int>( (accessorA_atom.get_pointer())[0] );
+            atm.fetch_add( 1 );
+
           }); // End of the kernel function
     });       // End of the queue commands
   }           // End of scope, wait for the queued work to stop.
 
-  std::cout <<"Counter incrememented " << global_range << " time " << std::endl; 
+  std::cout <<"Counter incrememented " << global_range << " time " << std::endl;
   std::cout << "Atomic Increment " << A_atom[0] << std::endl;
   std::cout << "Race condition Increment " << A[0] << std::endl;
 
