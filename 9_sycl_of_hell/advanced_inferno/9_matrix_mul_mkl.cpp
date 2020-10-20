@@ -64,8 +64,9 @@ int main() {
   std::uniform_real_distribution<> dis(1.0, 2.0);
 
   // C = alpha * op(A) * op(B)  + beta * C
-  mkl::transpose transA = mkl::transpose::nontrans;
-  mkl::transpose transB = mkl::transpose::nontrans;
+  oneapi::mkl::transpose transA = oneapi::mkl::transpose::nontrans;
+
+  oneapi::mkl::transpose transB = oneapi::mkl::transpose::nontrans;
 
   // matrix data sizes
   int m = M;

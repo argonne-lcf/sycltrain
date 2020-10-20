@@ -1,4 +1,5 @@
 #include <CL/sycl.hpp>
+#include <cstdint>
 
 // Maybe in the futur sycl will note be in the 'cl' namespace
 namespace sycl = cl::sycl;
@@ -6,9 +7,11 @@ namespace sycl = cl::sycl;
 int main() {
   // Selectors determine which device kernels will be dispatched to.
   // Create your own or use `{cpu,gpu,accelerator}_selector`
-  //sycl::default_selector selector;
+  sycl::gpu_selector selector;
+    
+  //sycl::host_selector selector;
 
-  sycl::queue myQueue;
+  sycl::queue myQueue(selector);
   std::cout << "Running on "
             << myQueue.get_device().get_info<sycl::info::device::name>()
             << "\n";

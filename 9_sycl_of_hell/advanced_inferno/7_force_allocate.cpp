@@ -1,3 +1,4 @@
+#include "argparse.hpp"
 #include <CL/sycl.hpp>
 #include <iostream>
 #include <vector>
@@ -18,8 +19,24 @@ void force_allocate(sycl::buffer<T, I> buffer, sycl::queue myQueue) {
 }
 
 int main(int argc, char **argv) {
+  argparse::ArgumentParser program("7_force_allocate.cpp");
+  
+  program.add_argument("-g","--global")
+   .help("Global Range")
+   .default_value(1)
+   .action([](const std::string& value) { return std::stoi(value); });
 
-  const auto global_range = (size_t)atoi(argv[1]);
+  try {
+    program.parse_args(argc, argv);
+  }
+  catch (const std::runtime_error& err) {
+    std::cout << err.what() << std::endl;
+    std::cout << program;
+    exit(0);
+  }
+
+  const auto global_range = program.get<int>("-g");
+
   std::vector<int> A(global_range);
 
   sycl::default_selector selector;
