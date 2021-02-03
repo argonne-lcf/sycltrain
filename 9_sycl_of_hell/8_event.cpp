@@ -22,9 +22,6 @@ int main() {
       }); 
     }); 
 
-    // wait for all queue submissions to complete
-    myQueue.wait();
-  
   // We want to gather information on the execution time of the kernel
   // But At this point in time we don't know if the kernel is finished or not.
   // Fortunaly,  `get_profiling_info` will wait for the event to be completed
