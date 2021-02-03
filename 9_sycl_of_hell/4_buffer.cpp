@@ -63,7 +63,10 @@ int main(int argc, char **argv) {
             accessorA[idx] = idx[0];
           }); // End of the kernel function
     });       // End of the queue commands
+    // wait for all queue submissions to complete
+    myQueue.wait();
   }           // End of scope, wait for the queued work to stop.
+
 
   for (size_t i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
