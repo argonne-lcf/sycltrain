@@ -8,7 +8,7 @@ class generator_kernel_hw {
 public:
   generator_kernel_hw(sycl::stream cout) : m_cout(cout) {}
 
-  void operator()(sycl::id<1> idx) {
+  void operator()(sycl::id<1> idx) const {
     m_cout << "Hello, World Functor: World rank " << idx[0] << sycl::endl;
   }
 
@@ -59,6 +59,11 @@ int main(int argc, char **argv) {
       auto hw_kernel = generator_kernel_hw(cout);
       cgh.parallel_for(sycl::range<1>(global_range), hw_kernel);
     }); // End of the queue commands
+
+    // wait for all queue submissions to complete
+    myQueue.wait();
+
   }     // End of scope, wait for the queued work to stop.
+
   return 0;
 }

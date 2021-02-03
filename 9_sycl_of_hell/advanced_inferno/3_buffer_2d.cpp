@@ -68,15 +68,13 @@ int main(int argc, char **argv) {
       // Create an accesor for the sycl buffer. Trust me, use auto.
       auto accessorA =
           bufferA.get_access<sycl::access::mode::discard_write>(cgh);
-      // Nd range allow use to access information
-      sycl::range<2> global(global_range, global_range);
 
       cgh.parallel_for<class hello_world>(
-          sycl::range<2>(global), [=](sycl::nd_item<2> idx) {
-            const int i = idx.get_global_id(0);
-            const int j = idx.get_global_id(1);
-            const int n = idx.get_global_linear_id();
-            accessorA[i][j] = n;
+	sycl::range<2>(global_range, global_range), [=](sycl::item<2> idx) {
+	  const int i = idx.get_id(0);
+	  const int j = idx.get_id(1);
+	  const int n = idx.get_linear_id();
+	  accessorA[i][j] = n;
           }); // End of the kernel function
     });       // End of the queue commands
   }           // End of scope, wait for the queued work to stop.

@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
     // Force the allocation of the buffer.
 
     force_allocate<sycl::access::target::global_buffer>(bufferA, myQueue);
+
   } // End of scope, wait for the queued work to stop.
   return 0;
 }
