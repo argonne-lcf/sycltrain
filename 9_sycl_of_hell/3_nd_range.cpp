@@ -67,5 +67,8 @@ int main(int argc, char **argv) {
           }); // End of the kernel function
     });       // End of the queue commands
               // Can also use  myQueue.wait_and_throw();
+  // wait for all queue submissions to complete
+  myQueue.wait_and_throw();
+
   return 0;
 }

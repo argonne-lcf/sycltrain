@@ -8,8 +8,8 @@
 #include <iostream>
 #include <limits>
 #include <CL/sycl.hpp>
-#include "mkl_blas_sycl.hpp"
-#include "mkl.h"
+//#include "mkl_blas_sycl.hpp"
+#include "oneapi/mkl.hpp"
 
 using namespace cl::sycl;
 
@@ -147,6 +147,8 @@ int main() {
     buffer<double, 1> c{C_onemkl, range<1>{M*P}};
 
     oneapi::mkl::blas::gemm(device_queue, transA, transB, n, m, k, alpha, b, ldB, a, ldA, beta, c, ldC); // row-major    
+
+    device_queue.wait();
   }
   catch(cl::sycl::exception const& e) {
     std::cout << "\t\tSYCL exception during GEMM\n" << e.what() << std::endl << "OpenCL status: " << e.get_cl_code() << std::endl;

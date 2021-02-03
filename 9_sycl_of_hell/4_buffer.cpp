@@ -40,8 +40,8 @@ int main(int argc, char **argv) {
   // Create your own or use `{cpu,gpu,accelerator}_selector`
   {
     // Create sycl buffer.
-    // The buffer need to be destructed at the end of the scope to triger 
-    // syncronization
+    // The buffer need to be destructed at the end of the scope to trigger 
+    // synchronization
     // Trivia: What happend if we create the buffer in the outer scope?
     sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
 
@@ -64,6 +64,7 @@ int main(int argc, char **argv) {
           }); // End of the kernel function
     });       // End of the queue commands
   }           // End of scope, wait for the queued work to stop.
+
 
   for (size_t i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;

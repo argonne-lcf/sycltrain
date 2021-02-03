@@ -31,5 +31,9 @@ int main() {
       sout << "Hello, World!" << sycl::endl;
     }); // End of the kernel function
   });   // End of the queue commands. The kernel is now submited
+
+  // wait for all queue submissions to complete
+  myQueue.wait();
+
   return 0;
 }

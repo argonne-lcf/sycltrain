@@ -32,6 +32,12 @@ int main() {
       // Use cgh.set_args($acceors) if required by your kermel
       cgh.single_task(p.get_kernel("hello_world"));
     });
+
+    // wait for all queue submissions to complete
+    myQueue.wait();
+
   } // End of scopes, the queue will be destroyed, trigering a synchronization
+
+
   return 0;
 }

@@ -44,5 +44,9 @@ int main(int argc, char **argv) {
           sout << "Hello, World: World rank " << idx << sycl::endl;
         }); // End of the kernel function
   });       // End of the queue commands.
+
+  // wait for all queue submissions to complete
+  myQueue.wait();
+
   return 0;
 }
