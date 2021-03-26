@@ -1,7 +1,7 @@
 #include <CL/sycl.hpp>
 #include <cstdint>
 
-// Maybe in the futur sycl will note be in the 'cl' namespace
+// Maybe in the futur sycl will not be in the 'cl' namespace
 namespace sycl = cl::sycl;
 
 int main() {
