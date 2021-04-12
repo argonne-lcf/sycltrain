@@ -37,10 +37,7 @@ int main(int argc, char **argv) {
   sycl::default_selector selector;
   sycl::queue myQueue(selector);
 
-  sycl::device dev = myQueue.get_device();
-  sycl::context ctex = myQueue.get_context();
-
-  int *A = static_cast<int *>(sycl::malloc_shared(global_range * sizeof(int), dev, ctex));
+  int *A = static_cast<int *>(sycl::malloc_shared(global_range * sizeof(int), myQueue));
 
   // Advise runtime how memory will be used
   //auto e = myQueue.mem_advise(A, global_range * sizeof(int), PI_MEM_ADVICE_SET_NON_ATOMIC_MOSTLY);
