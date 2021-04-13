@@ -35,10 +35,9 @@ int main(int argc, char **argv) {
 
   // Selectors determine which device kernels will be dispatched to.
   sycl::default_selector selector;
-  sycl::queue myQueue(selector);
+  sycl::queue Q(selector);
 
-  int *A = sycl::malloc_shared<int>(global_range, myQueue));
-
+  int *A = sycl::malloc_shared<int>(global_range, Q));
   // Advise runtime how memory will be used
   //auto e = myQueue.mem_advise(A, global_range * sizeof(int), PI_MEM_ADVICE_SET_NON_ATOMIC_MOSTLY);
   //e.wait();
@@ -48,17 +47,13 @@ int main(int argc, char **argv) {
             << "\n";
 
   // Create a command_group to issue command to the group
-  myQueue.submit([&](sycl::handler &cgh) {
-    // No accessor needed!
-    cgh.parallel_for<class hello_world>(
+  Q.parallel_for<class hello_world>(
         sycl::range<1>{sycl::range<1>(global_range)},
         [=](sycl::item<1> id) {
           const sycl::id<1> world_rank_id=id.get_id();
           const int world_rank = world_rank_id[0];
           A[world_rank] = world_rank;
-        }); // End of the kernel function
-  });       // End of the queue commands
-  myQueue.wait();
+  }).wait();
 
   for (size_t i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
