@@ -9,7 +9,7 @@ public:
   generator_kernel_hw(sycl::stream cout) : m_cout(cout) {}
 
   void operator()(sycl::id<1> idx) const {
-    m_cout << "Hello, World Functor: World rank " << idx[0] << sycl::endl;
+    m_cout << "Hello, World Functor: World rank " << idx << sycl::endl;
   }
 
 private:
@@ -41,29 +41,15 @@ int main(int argc, char **argv) {
 
   const auto global_range = program.get<int>("-g");
 
-  //  _                             _
-  // |_) _. ._ ._ _. | | |  _  |   |_ _  ._
-  // |  (_| |  | (_| | | | (/_ |   | (_) |
+  sycl::queue Q;
+  std::cout << "Running on "
+            << Q.get_device().get_info<sycl::info::device::name>()
+            << "\n";
 
-  // Selectors determine which device kernels will be dispatched to.
-  sycl::default_selector selector;
-  {
-
-    sycl::queue myQueue(selector);
-    std::cout << "Running on "
-              << myQueue.get_device().get_info<sycl::info::device::name>()
-              << "\n";
-
-    myQueue.submit([&](sycl::handler &cgh) {
+  Q.submit([&](sycl::handler &cgh) {
       sycl::stream cout(1024, 256, cgh);
-      auto hw_kernel = generator_kernel_hw(cout);
-      cgh.parallel_for(sycl::range<1>(global_range), hw_kernel);
-    }); // End of the queue commands
-
-    // wait for all queue submissions to complete
-    myQueue.wait();
-
-  }     // End of scope, wait for the queued work to stop.
-
+      generator_kernel_hw kernel{cout};
+      cgh.parallel_for(sycl::range<1>(global_range), kernel);
+  }).wait(); // End of the queue commands
   return 0;
 }

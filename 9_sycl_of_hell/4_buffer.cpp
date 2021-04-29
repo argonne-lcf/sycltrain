@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
     Q.submit([&](sycl::handler &cgh) {
       // Create an accesor for the sycl buffer
-       sycl::accessor accessorA{bufferA, cgh, sycl::write_only, sycl::noinit};
+      sycl::accessor accessorA{bufferA, cgh, sycl::write_only, sycl::noinit};
       // Submit the kernel
       cgh.parallel_for(
           sycl::range<1>(global_range), 

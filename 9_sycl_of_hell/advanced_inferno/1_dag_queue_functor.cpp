@@ -62,33 +62,29 @@ int main(int argc, char **argv) {
   //  |_//--\\_|
 
   // Selectors determine which device kernels will be dispatched to.
-  sycl::default_selector selector;
-  // Create your own or use `{cpu,gpu,accelerator}_selector`
-  {
-    sycl::queue myQueue(selector);
-    std::cout << "Running on "
-              << myQueue.get_device().get_info<sycl::info::device::name>()
-              << "\n";
-    // A -> B -> C -> A
+  sycl::queue Q;
+  std::cout << "Running on "
+            << Q.get_device().get_info<sycl::info::device::name>()
+           << "\n";
+    
+  // A -> B -> C -> A
+  // Create buffers
+  sycl::buffer  bufferA(A);
+  // Empty buffer
+  sycl::buffer<sycl::cl_int, 1> bufferB(global_range);
+  sycl::buffer<sycl::cl_int, 1> bufferC(global_range);
 
-    // Create buffer
-    sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), global_range);
-    sycl::buffer<sycl::cl_int, 1> bufferB(global_range);
-    sycl::buffer<sycl::cl_int, 1> bufferC(global_range);
-
-    myQueue.submit(std::bind(f_copy, std::placeholders::_1, global_range,
-                             bufferB, bufferA));
-    myQueue.submit(std::bind(f_copy, std::placeholders::_1, global_range,
-                             bufferC, bufferB));
-    myQueue.submit(std::bind(f_copy, std::placeholders::_1, global_range,
-                             bufferA, bufferC));
-  } // End of scope, wait for the queued work to stop.
-
-  std::for_each(A.begin(), A.end(), [idx = 0](int v) mutable {
-    std::cout << "A[ " << idx << " ] = " << v << " Expected " << idx + 3 << std::endl;
-    assert(v == idx + 3);
-    ++idx;
-  });
-
+  Q.submit(std::bind(f_copy, std::placeholders::_1, global_range,
+                     bufferB, bufferA));
+  Q.submit(std::bind(f_copy, std::placeholders::_1, global_range,
+                     bufferC, bufferB));
+  Q.submit(std::bind(f_copy, std::placeholders::_1, global_range,
+                     bufferA, bufferC));
+ 
+  sycl::host_accessor AccA { bufferA, sycl::read_only };
+  for (size_t i = 0; i < global_range; i++) {
+    assert ( AccA[i] == i + 3);
+    std::cout << "A[ " << i << " ] = " << AccA[i] << std::endl;
+  }
   return 0;
 }

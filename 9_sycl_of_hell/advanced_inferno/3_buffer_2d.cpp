@@ -48,36 +48,27 @@ int main(int argc, char **argv) {
   //
 
   Matrix<int> A(global_range, global_range);
-
-  // Selectors determine which device kernels will be dispatched to.
-  sycl::default_selector selector;
-  // Create your own or use `{cpu,gpu,accelerator}_selector`
-  {
-    // Create sycl buffer.
-    // Trivia: What happend if we create the buffer in the outer scope?
+  
+  { 
     sycl::buffer<int, 2> bufferA(A.data(),
                                  sycl::range<2>(global_range, global_range));
 
-    sycl::queue myQueue(selector);
+    sycl::queue Q;
     std::cout << "Running on "
-              << myQueue.get_device().get_info<sycl::info::device::name>()
+              << Q.get_device().get_info<sycl::info::device::name>()
               << "\n";
 
-    // Create a command_group to issue command to the group
-    myQueue.submit([&](sycl::handler &cgh) {
-      // Create an accesor for the sycl buffer. Trust me, use auto.
-      auto accessorA =
-          bufferA.get_access<sycl::access::mode::discard_write>(cgh);
-
-      cgh.parallel_for<class hello_world>(
-	sycl::range<2>(global_range, global_range), [=](sycl::item<2> idx) {
-	  const int i = idx.get_id(0);
-	  const int j = idx.get_id(1);
-	  const int n = idx.get_linear_id();
-	  accessorA[i][j] = n;
+    Q.submit([&](sycl::handler &cgh) {
+      sycl::accessor accessorA{bufferA, cgh, sycl::write_only, sycl::noinit};
+      cgh.parallel_for(
+        sycl::range<2>(global_range, global_range), [=](sycl::item<2> idx) {
+          const int i = idx.get_id(0);
+          const int j = idx.get_id(1);
+          const int n = idx.get_linear_id();
+          accessorA[i][j] = n;
           }); // End of the kernel function
     });       // End of the queue commands
-  }           // End of scope, wait for the queued work to stop.
+  }
 
   for (size_t i = 0; i < global_range; i++)
     for (size_t j = 0; j < global_range; j++)

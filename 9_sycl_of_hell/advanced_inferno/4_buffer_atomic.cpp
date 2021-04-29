@@ -43,46 +43,36 @@ int main(int argc, char **argv) {
   //
 
   // Crrate array
-  std::vector<int> A(1);
-  std::vector<int> A_atom(1);
-
-  // Selectors determine which device kernels will be dispatched to.
-  sycl::default_selector selector;
-  // Create your own or use `{cpu,gpu,accelerator}_selector`
+  int A = 0;
+  int A_atom = 0;
   {
-    // Create sycl buffer.
-    sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
-    sycl::buffer<sycl::cl_int, 1> bufferA_atom(A_atom.data(), A_atom.size());
+    // Create sycl buffers.
+    sycl::buffer<int> bufferA(&A, sizeof(int));
+    sycl::buffer<int> bufferA_atom(&A_atom, sizeof(int));
 
-    sycl::queue myQueue(selector);
+    sycl::queue Q;
     std::cout << "Running on "
-              << myQueue.get_device().get_info<sycl::info::device::name>()
+              << Q.get_device().get_info<sycl::info::device::name>()
               << "\n";
 
     // Create a command_group to issue command to the group
-    myQueue.submit([&](sycl::handler &cgh) {
-      // Create an accesor for the sycl buffer. Trust me, use auto.
-      auto accessorA = bufferA.get_access<sycl::access::mode::read_write>(cgh);
-      auto accessorA_atom =  bufferA_atom.get_access<sycl::access::mode::atomic>(cgh);
-      // Range allow use to access information
-      cgh.parallel_for<class hello_world>(
-          sycl::range<1>(global_range),
-          [=](sycl::id<1> _) {
-            accessorA[0] = accessorA[0] + 1;
-
-            //accessorA_atom[0].fetch_add(1); // will be depricated by SYCL2020
-
-            auto atm = relaxed_atomic_ref<sycl::cl_int>( (accessorA_atom.get_pointer())[0] );
+    Q.submit([&](sycl::handler &cgh) {
+      sycl::accessor accessorA{bufferA, cgh, sycl::read_write};
+      sycl::accessor accessorA_atom(bufferA_atom, cgh, sycl::read_write);
+      // Legacy version:
+      //auto accessorA_atom = bufferA_atom.get_access<sycl::access::mode::atomic>(cgh);
+      cgh.parallel_for(
+          sycl::range<1>(global_range), [=](auto _) {
+            accessorA[0] +=1 ;
+            auto atm = relaxed_atomic_ref<sycl::cl_int>(accessorA_atom[0]);
             atm.fetch_add( 1 );
+          }); 
+    });   
+  }      
 
-          }); // End of the kernel function
-    });       // End of the queue commands
-  }           // End of scope, wait for the queued work to stop.
-
-  std::cout <<"Counter incrememented " << global_range << " time " << std::endl;
-  std::cout << "Atomic Increment " << A_atom[0] << std::endl;
-  std::cout << "Race condition Increment " << A[0] << std::endl;
-
-  assert(A_atom[0] == global_range );
+  std::cout << "Counter incrememented " << global_range << " time " << std::endl;
+  std::cout << "Atomic Increment:" << A_atom << std::endl;
+  assert( A_atom == global_range);
+  std::cout << "Non Atomic Increment " << A << std::endl;
   return 0;
 }
