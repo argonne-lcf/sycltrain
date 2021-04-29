@@ -8,12 +8,10 @@ int main() {
   // Selectors determine which device kernels will be dispatched to.
   // Create your own or use `{cpu,gpu,accelerator}_selector`
   sycl::gpu_selector selector;
-    
-  //sycl::host_selector selector;
-
-  sycl::queue myQueue(selector);
+  
+  sycl::queue Q(selector);
   std::cout << "Running on "
-            << myQueue.get_device().get_info<sycl::info::device::name>()
+            << Q.get_device().get_info<sycl::info::device::name>()
             << "\n";
   //         __                     ___
   //  /\    (_  o ._ _  ._  |  _     |  _.  _ |
@@ -22,18 +20,18 @@ int main() {
 
   // Create a command_group to issue command to the group.
   // Use A lambda to generate the control group handler
-  // Queue submision are asyncrhonous! (similar to OpenMP nowait)
-  myQueue.submit([&](sycl::handler &cgh) {
+  // Queue submision are asyncrhonous (similar to OpenMP nowait)
+  Q.submit([&](sycl::handler &cgh) {
     // Create a output stream
     sycl::stream sout(1024, 256, cgh);
     // Submit a unique task, using a lambda
-    cgh.single_task<class hello_world>([=]() {
+    cgh.single_task([=]() {
       sout << "Hello, World!" << sycl::endl;
     }); // End of the kernel function
   });   // End of the queue commands. The kernel is now submited
 
   // wait for all queue submissions to complete
-  myQueue.wait();
+  Q.wait();
 
   return 0;
 }

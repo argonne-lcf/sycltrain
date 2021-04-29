@@ -28,29 +28,28 @@ int main(int argc, char **argv) {
 
   const auto global_range = program.get<int>("-g");
 
-  sycl::queue myQueue;
-
-  // Create usm allocator
-  sycl::usm_allocator<float, sycl::usm::alloc::shared> allocator(myQueue);
-  // Allocate value
-  std::vector<float, decltype(allocator)> A(global_range, allocator);
+  sycl::queue Q;
 
   std::cout << "Running on "
-            << myQueue.get_device().get_info<sycl::info::device::name>()
+            << Q.get_device().get_info<sycl::info::device::name>()
             << "\n";
+
+  // Create custom shared usm allocator and use it
+  sycl::usm_allocator<float, sycl::usm::alloc::shared> allocator(Q);
+  std::vector<float, decltype(allocator)> A(global_range, allocator);
 
   // A vector is not trivialy copyable
   auto *A_p = A.data();
+  // One case use sycl::malloc_device is they prefere to work with row pointer
+  // See example in advended infermo
+  
+  //Short syntax
+  // USM is shorted but you need to handle the data-dependency ordered yourself
+  // "Naive" way is to put `wait` after each enqueue.
+  Q.parallel_for(global_range, [=](sycl::id<1> idx) { A_p[idx] = idx; }).wait();
 
-  // Create a command_group to issue command to the group
-  myQueue.parallel_for<class hello_world>(
-        sycl::range<1>{sycl::range<1>(global_range)},
-        [=](sycl::id<1> idx_id) {
-          const int idx = idx_id[0];
-          A_p[idx] = idx;
-  }).wait();
-
-  for (size_t i = 0; i < global_range; i++)
+  //We can use your vector as usual
+  for (size_t i = 0; i < A.size(); i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
   return 0;
 }

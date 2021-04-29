@@ -24,8 +24,8 @@ int main() {
       std::cout << "-- Device: "
                 << dev.get_info<sycl::info::device::name>() << " "
                 << (dev.is_gpu() ? "is a gpu" : " is not a gpu") << std::endl;
-      // sycl::info::device::device_type exist, but do not overload the <<
-      // operator
+      // sycl::info::device::device_type exist, one can use a Map to translate to a nice sting
+      // https://github.com/intel/llvm/blob/ef4e6ddce56fe21621bca7d62932713152de3f0e/sycl/source/detail/device_filter.cpp#L22
     }
   }
 }

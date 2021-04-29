@@ -37,19 +37,19 @@ int main(int argc, char **argv) {
   // | | (_|        | (_| | | (_| (/_
   //           __              _|
 
-  sycl::queue myQueue;
+  sycl::queue Q;
   std::cout << "Running on "
-            << myQueue.get_device().get_info<sycl::info::device::name>()
+            << Q.get_device().get_info<sycl::info::device::name>()
             << std::endl;
 
   // Create a command_group to issue command to the group
-  myQueue.submit([&](sycl::handler &cgh) {
+  Q.submit([&](sycl::handler &cgh) {
     // Create a output stream (lot of display, lot of number)
     sycl::stream sout(10240, 2560, cgh);
 
-    // nd_range, geneate a nd_item who allow use to query loop dispach
-    // information
-    cgh.parallel_for<class hello_world>(
+    // nd_range, geneate a nd_item who allow use to query 
+    // loop dispach information
+    cgh.parallel_for(
         sycl::nd_range<1>{sycl::range<1>(global_range),
                           sycl::range<1>(local_range)},
           [=](sycl::nd_item<1> idx) {
@@ -65,10 +65,7 @@ int main(int argc, char **argv) {
                  << local_size << ". Group rank/size: " << group_rank << " / "
                  << group_size << sycl::endl;
           }); // End of the kernel function
-    });       // End of the queue commands
-              // Can also use  myQueue.wait_and_throw();
-  // wait for all queue submissions to complete
-  myQueue.wait_and_throw();
+    }).wait();       // End of the queue commands
 
   return 0;
 }
