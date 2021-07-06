@@ -7,9 +7,8 @@ namespace sycl = cl::sycl;
 int main() {
   // Selectors determine which device kernels will be dispatched to.
   // Create your own or use `{cpu,gpu,accelerator}_selector`
-  sycl::gpu_selector selector;
+  sycl::queue Q(sycl::gpu_selector{});
   
-  sycl::queue Q(selector);
   std::cout << "Running on "
             << Q.get_device().get_info<sycl::info::device::name>()
             << "\n";
