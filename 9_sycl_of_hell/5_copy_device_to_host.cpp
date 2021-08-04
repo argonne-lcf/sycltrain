@@ -44,12 +44,8 @@ int main(int argc, char **argv) {
  
   // Create a command_group to issue command to the group
   Q.submit([&](sycl::handler &cgh) {
-      sycl::accessor accessorA{bufferA, cgh, sycl::write_only, sycl::noinit};
-      cgh.parallel_for(
-          sycl::range<1>(global_range),
-          [=](sycl::id<1> idx) {
-            accessorA[idx] = idx;
-      });
+      sycl::accessor accessorA{bufferA, cgh, sycl::write_only, sycl::no_init};
+      cgh.parallel_for(global_range, [=](sycl::id<1> idx) {accessorA[idx] = idx;});
   }); // SYCL Queue are by default out-of-order
   // But accessors will handle the dependency dag for you
 

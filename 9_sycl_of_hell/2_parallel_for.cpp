@@ -41,13 +41,12 @@ int main(int argc, char **argv) {
     // #pragma omp parallel for
     cgh.parallel_for(
         // for(int idx=0; idx++; idx < global_range)
-        sycl::range<1>(global_range), [=](sycl::id<1> idx) {
+        global_range, [=](sycl::id<1> idx) {
           sout << "Hello, World: World rank " << idx << sycl::endl;
         }); // End of the kernel function
-  });       // End of the queue commands.
-
-  // wait for all queue submissions to complete
-  Q.wait();
+  }).wait();       // End of the queue commands we waint on the event reported.
+  //One can also wait for all the job on the Queue to be finished
+  //Q.wait();
 
   return 0;
 }
