@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     // sycl::buffer<sycl::cl_int,1> bufferA(A.data(), A.size());
     Q.submit([&](sycl::handler &cgh) {
       // Create an accesor for the sycl buffer
-      sycl::accessor accessorA{bufferA, cgh, sycl::write_only, sycl::no_init};
+      sycl::accessor accessorA{bufferA, cgh, sycl::write_only}; //, sycl::no_init};
       // Submit the kernel
       cgh.parallel_for(global_range,  [=](sycl::id<1> idx) {
          // Use the accesor
