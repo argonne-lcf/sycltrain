@@ -2,7 +2,7 @@
 #include <CL/sycl.hpp>
 #include <vector>
 
-namespace sycl = cl::sycl;
+
 
 int main(int argc, char **argv) {
 

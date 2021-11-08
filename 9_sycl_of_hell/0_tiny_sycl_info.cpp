@@ -1,7 +1,7 @@
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <vector>
 
-namespace sycl = cl::sycl;
+
 
 int main() {
 

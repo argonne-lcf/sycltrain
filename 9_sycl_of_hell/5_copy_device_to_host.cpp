@@ -1,7 +1,7 @@
 #include "argparse.hpp"
 #include <CL/sycl.hpp>
 
-namespace sycl = cl::sycl;
+
 
 int main(int argc, char **argv) {
 
