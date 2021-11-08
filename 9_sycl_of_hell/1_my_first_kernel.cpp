@@ -1,4 +1,4 @@
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <cstdint>
 
 // Maybe in the futur sycl will not be in the 'cl' namespace
