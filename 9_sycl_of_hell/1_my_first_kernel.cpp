@@ -2,7 +2,7 @@
 #include <cstdint>
 
 // Maybe in the futur sycl will not be in the 'cl' namespace
-namespace sycl = cl::sycl;
+
 
 int main() {
   // Selectors determine which device kernels will be dispatched to.

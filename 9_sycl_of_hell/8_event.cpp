@@ -1,5 +1,4 @@
-#include <CL/sycl.hpp>
-namespace sycl = cl::sycl;
+#include <sycl/sycl.hpp>
 
 int main() {
   // If one use event to use profiling, you need to enable your queue for that
@@ -19,14 +18,14 @@ int main() {
   // The queue submition return an event,
   // That we can use for synchronizing kernel submision, or like in this example,
   // or gather proffiling information
-  cl::sycl::event e0 = Q.submit([&](sycl::handler &cgh) {
+  sycl::event e0 = Q.submit([&](sycl::handler &cgh) {
     sycl::stream sout(1024, 256, cgh);
     cgh.single_task<class hello_world>([=]() {
        sout << "Hello, World 0!" << sycl::endl;
     }); 
   }); 
 
-  cl::sycl::event e1 = Q.submit([&](sycl::handler &cgh) {
+  sycl::event e1 = Q.submit([&](sycl::handler &cgh) {
     //This kernel will wait that e0 finish before being submited
     // Without it, because Queue are out-of-order by default, the order was non deterministic
     cgh.depends_on(e0);
