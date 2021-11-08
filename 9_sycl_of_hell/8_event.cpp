@@ -20,7 +20,7 @@ int main() {
   // or gather proffiling information
   sycl::event e0 = Q.submit([&](sycl::handler &cgh) {
     sycl::stream sout(1024, 256, cgh);
-    cgh.single_task<class hello_world>([=]() {
+    cgh.single_task([=]() {
        sout << "Hello, World 0!" << sycl::endl;
     }); 
   }); 
@@ -30,7 +30,7 @@ int main() {
     // Without it, because Queue are out-of-order by default, the order was non deterministic
     cgh.depends_on(e0);
     sycl::stream sout(1024, 256, cgh);
-    cgh.single_task<class hello_world>([=]() {
+    cgh.single_task([=]() {
        sout << "Hello, World 1!" << sycl::endl;
     });
   });
