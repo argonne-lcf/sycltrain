@@ -1,8 +1,6 @@
 #include <sycl/sycl.hpp>
 #include <cstdint>
 
-
-
 int main() {
   // Selectors determine which device kernels will be dispatched to.
   // Create your own or use `{cpu,gpu,accelerator}_selector`
