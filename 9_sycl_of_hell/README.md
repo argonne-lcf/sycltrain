@@ -1,7 +1,8 @@
 # How to compile
 
 ```
-make -j 7
+
+CXX=dpcpp make -j 7
 ```
 
 # List of program
