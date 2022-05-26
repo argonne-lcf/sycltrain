@@ -19,7 +19,7 @@ module use /lus/theta-fs0/software/thetagpu/compilers/llvm/sycl-20220523/modulef
 module load dpcpp
 cd sycltrain/9_sycl_of_hell/
 make all
-``
+```
 
 # Then On a compute node (just run)
 ```
