@@ -2,7 +2,7 @@
 
 ```
 
-CXX=dpcpp make -j 7
+CXX=icpx CXXFLAGS=-fsycl make -j 7
 ```
 
 # List of program
