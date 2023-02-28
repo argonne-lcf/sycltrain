@@ -4,7 +4,7 @@
 int main() {
   // Selectors determine which device kernels will be dispatched to.
   // Create your own or use `{cpu,gpu,accelerator}_selector`
-  sycl::queue Q(sycl::gpu_selector{});
+  sycl::queue Q(sycl::gpu_selector_v);
   
   std::cout << "Running on "
             << Q.get_device().get_info<sycl::info::device::name>()
