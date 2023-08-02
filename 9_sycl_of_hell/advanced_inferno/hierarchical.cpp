@@ -33,7 +33,7 @@ class PrivateMemory;
  * hierarchical parallel_for_work_item context */
 static inline sycl::id<1> get_global_id(sycl::group<1>& group,
 					sycl::item<1>& item) {
-  auto groupID = group.get_id();
+  auto groupID = group.get_group_id();
   auto localR = item.get_range();
   auto localID = item.get_id();
   return sycl::id<1>(groupID[0] * localR[0] + localID[0]);

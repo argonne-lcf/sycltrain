@@ -15,33 +15,33 @@
 // Host code.
 //
 // This sample implements matrix multiplication as described in Chapter 3
-// of the programming guide and uses the CUBLAS library to demonstrate
+// of the programming guide and uses the ONEMKL library to demonstrate
 // the best performance.
 
 // SOME PRECAUTIONS:
 // IF WE WANT TO CALCULATE ROW-MAJOR MATRIX MULTIPLY C = A * B,
-// WE JUST NEED CALL CUBLAS API IN A REVERSE ORDER: cublasSegemm(B, A)!
+// WE JUST NEED CALL ONEMKL API IN A REVERSE ORDER: onemklSegemm(B, A)!
 // The reason is explained as follows:
 
-// CUBLAS library uses column-major storage, but C/C++ use row-major storage.
-// When passing the matrix pointer to CUBLAS, the memory layout alters from
+// ONEMKL library uses column-major storage, but C/C++ use row-major storage.
+// When passing the matrix pointer to ONEMKL, the memory layout alters from
 // row-major to column-major, which is equivalent to an implicit transpose.
 
 // In the case of row-major C/C++ matrix A, B, and a simple matrix multiplication
-// C = A * B, we can't use the input order like cublasSgemm(A, B)  because of
-// implicit transpose. The actual result of cublasSegemm(A, B) is A(T) * B(T).
+// C = A * B, we can't use the input order like onemklSgemm(A, B)  because of
+// implicit transpose. The actual result of onemklSegemm(A, B) is A(T) * B(T).
 // If col(A(T)) != row(B(T)), equal to row(A) != col(B), A(T) and B(T) are not
 // multipliable. Moreover, even if A(T) and B(T) are multipliable, the result C
-// is a column-based cublas matrix, which means C(T) in C/C++, we need extra
+// is a column-based onemkl matrix, which means C(T) in C/C++, we need extra
 // transpose code to convert it to a row-based C/C++ matrix.
 
 // To solve the problem, let's consider our desired result C, a row-major matrix.
-// In cublas format, it is C(T) actually (because of the implicit transpose).
-// C = A * B, so C(T) = (A * B) (T) = B(T) * A(T). Cublas matrice B(T) and A(T)
+// In onemkl format, it is C(T) actually (because of the implicit transpose).
+// C = A * B, so C(T) = (A * B) (T) = B(T) * A(T). Onemkl matrice B(T) and A(T)
 // happen to be C/C++ matrice B and A (still because of the implicit transpose)!
 // We don't need extra transpose code, we only need alter the input order!
 //
-// CUBLAS provides high-performance matrix multiplication.
+// ONEMKL provides high-performance matrix multiplication.
 // See also:
 // V. Volkov and J. Demmel, "Benchmarking GPUs to tune dense linear algebra,"
 // in Proc. 2008 ACM/IEEE Conf. on Supercomputing (SC '08),
@@ -49,12 +49,14 @@
 //
 
 // Utilities and system includes
+#include <sycl/sycl.hpp>
+#include <oneapi/mkl.hpp>
 #include <assert.h>
 #include <cstdio>
+#include <cmath>
+#include <chrono>
 
-// CUDA runtime
-#include <cuda_runtime.h>
-#include <cublas_v2.h>
+// To compile: clang++ -std=c++17 -sycl-std=2020 -O3 -fsycl -fsycl-targets=nvptx64-nvidia-cuda -Xsycl-target-backend --cuda-gpu-arch=sm_80 -L$MKLROOT/lib -lonemkl sycl_onemkl.cpp -o sycl_onemkl.out
 
 #ifndef min
 #define min(a,b) ((a < b) ? a : b)
@@ -62,21 +64,6 @@
 #ifndef max
 #define max(a,b) ((a > b) ? a : b)
 #endif
-
-
-template< typename T >
-void check(T result, char const *const func, const char *const file, int const line)
-{
-    if (result)
-    {
-        fprintf(stderr, "CUDA error at %s:%d code=%d(%s) \"%s\" \n",
-                file, line, static_cast<unsigned int>(result), result, func);
-        // Make sure we call CUDA Device Reset before exiting
-        exit(EXIT_FAILURE);
-    }
-}
-// This will output the proper CUDA error strings in the event that a CUDA host call returns an error
-#define checkCudaErrors(val)           check ( (val), #val, __FILE__, __LINE__ )
 
 inline bool
 sdkCompareL2fe(const float *reference, const float *data,
@@ -194,22 +181,8 @@ void printDiff(float *data1, float *data2, int width, int height, int iListLengt
     printf(" \n  Total Errors = %d\n", error_count);
 }
 
-void initializeCUDA(int argc, char **argv, int &devID, int &iSizeMultiple, sMatrixSize &matrix_size)
-{
-    // By default, we use device 0, otherwise we override the device ID based on what is provided at the command line
-    cudaError_t error;
-    devID = 0;
-
-    // get number of SMs on this GPU
-    error = cudaGetDevice(&devID);
-
-    if (error != cudaSuccess)
-    {
-        printf("cudaGetDevice returned error code %d, line(%d)\n", error, __LINE__);
-        exit(EXIT_FAILURE);
-    }
-
-
+void initializeCUDA(int argc, char **argv, int &devID, int &iSizeMultiple,
+                    sMatrixSize &matrix_size) {
     iSizeMultiple = min(iSizeMultiple, 10);
     iSizeMultiple = max(iSizeMultiple, 1);
 
@@ -238,16 +211,12 @@ void initializeCUDA(int argc, char **argv, int &devID, int &iSizeMultiple, sMatr
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//! Run a simple test matrix multiply using CUBLAS
+//! Run a simple test matrix multiply using ONEMKL
 ////////////////////////////////////////////////////////////////////////////////
 int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
 {
-    cudaDeviceProp deviceProp;
-
-    checkCudaErrors(cudaGetDeviceProperties(&deviceProp, devID));
-
-    // use a larger block size for Fermi and above
-    int block_size = (deviceProp.major < 2) ? 16 : 32;
+    sycl::queue q(sycl::gpu_selector_v);
+    int block_size = 32;
 
     // set seed for rand()
     srand(2006);
@@ -274,61 +243,63 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
 
     // allocate host memory for the result
     float *h_C      = (float *) malloc(mem_size_C);
-    float *h_CUBLAS = (float *) malloc(mem_size_C);
+    float *h_ONEMKL = (float *) malloc(mem_size_C);
 
-    checkCudaErrors(cudaMalloc((void **) &d_A, mem_size_A));
-    checkCudaErrors(cudaMalloc((void **) &d_B, mem_size_B));
-    checkCudaErrors(cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice));
-    checkCudaErrors(cudaMemcpy(d_B, h_B, mem_size_B, cudaMemcpyHostToDevice));
-    checkCudaErrors(cudaMalloc((void **) &d_C, mem_size_C));
+    d_A = (float *)sycl::malloc_device(mem_size_A, q);
+    d_B = (float *)sycl::malloc_device(mem_size_B, q);
+    q.memcpy(d_A, h_A, mem_size_A).wait();
+    q.memcpy(d_B, h_B, mem_size_B).wait();
+    d_C = (float *)sycl::malloc_device(mem_size_C, q);
 
     // setup execution parameters
-    dim3 threads(block_size, block_size);
-    dim3 grid(matrix_size.uiWC / threads.x, matrix_size.uiHC / threads.y);
+    sycl::range<3> threads(1, block_size, block_size);
+    sycl::range<3> grid(1, matrix_size.uiHC / threads[1],
+                        matrix_size.uiWC / threads[2]);
 
     // create and start timer
-    printf("Computing result using CUBLAS...");
+    printf("Computing result using ONEMKL...");
 
     // execute the kernel
     int nIter = 30;
 
-    // CUBLAS version 2.0
+    // ONEMKL version
     {
         const float alpha = 1.0f;
         const float beta  = 0.0f;
-        cublasHandle_t handle;
-        cudaEvent_t start, stop;
+        std::chrono::time_point<std::chrono::steady_clock> start;
+        std::chrono::time_point<std::chrono::steady_clock> stop;
 
-        checkCudaErrors(cublasCreate(&handle));
-
-        //Perform warmup operation with cublas
-        checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
-
-        // Allocate CUDA events that we'll use for timing
-        checkCudaErrors(cudaEventCreate(&start));
-        checkCudaErrors(cudaEventCreate(&stop));
+        //Perform warmup operation with onemkl
+        oneapi::mkl::blas::column_major::gemm(
+            q, oneapi::mkl::transpose::nontrans,
+            oneapi::mkl::transpose::nontrans, matrix_size.uiWB,
+            matrix_size.uiHA, matrix_size.uiWA, alpha, d_B, matrix_size.uiWB,
+            d_A, matrix_size.uiWA, beta, d_C, matrix_size.uiWB).wait();
 
         // Record the start event
-        checkCudaErrors(cudaEventRecord(start, NULL));
+        start = std::chrono::steady_clock::now();
 
         for (int j = 0; j < nIter; j++)
         {
-            //note cublas is column primary!
+            //note onemkl is column primary!
             //need to transpose the order
-            checkCudaErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, &alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, &beta, d_C, matrix_size.uiWB));
-
+	    oneapi::mkl::blas::column_major::gemm(
+		q, oneapi::mkl::transpose::nontrans,
+		oneapi::mkl::transpose::nontrans, matrix_size.uiWB,
+		matrix_size.uiHA, matrix_size.uiWA, alpha, d_B,
+		matrix_size.uiWB, d_A, matrix_size.uiWA, beta, d_C,
+		matrix_size.uiWB).wait();
         }
 
         printf("done.\n");
 
         // Record the stop event
-        checkCudaErrors(cudaEventRecord(stop, NULL));
+	//q.wait();
+        stop = std::chrono::steady_clock::now();
 
-        // Wait for the stop event to complete
-        checkCudaErrors(cudaEventSynchronize(stop));
 
         float msecTotal = 0.0f;
-        checkCudaErrors(cudaEventElapsedTime(&msecTotal, start, stop));
+	msecTotal = std::chrono::duration<float, std::milli>(stop - start).count();
 
         // Compute and print the performance
         float msecPerMatrixMul = msecTotal / nIter;
@@ -341,10 +312,8 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
             flopsPerMatrixMul);
 
         // copy result from device to host
-        checkCudaErrors(cudaMemcpy(h_CUBLAS, d_C, mem_size_C, cudaMemcpyDeviceToHost));
+	q.memcpy(h_ONEMKL, d_C, mem_size_C).wait();
 
-        // Destroy the handle
-        checkCudaErrors(cublasDestroy(handle));
     }
 
     // compute reference solution
@@ -353,14 +322,14 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
     matrixMulCPU(reference, h_A, h_B, matrix_size.uiHA, matrix_size.uiWA, matrix_size.uiWB);
     printf("done.\n");
 
-    // check result (CUBLAS)
-    bool resCUBLAS = sdkCompareL2fe(reference, h_CUBLAS, size_C, 1.0e-6f);
-    if (resCUBLAS != true)
+    // check result (ONEMKL)
+    bool resONEMKL = sdkCompareL2fe(reference, h_ONEMKL, size_C, 1.0e-6f);
+    if (resONEMKL != true)
     {
-        printDiff(reference, h_CUBLAS, matrix_size.uiWC, matrix_size.uiHC, 100, 1.0e-5f);
+        printDiff(reference, h_ONEMKL, matrix_size.uiWC, matrix_size.uiHC, 100, 1.0e-5f);
     }
 
-    printf("Comparing CUBLAS Matrix Multiply with CPU results: %s\n", (true == resCUBLAS) ? "PASS" : "FAIL");
+    printf("Comparing ONEMKL Matrix Multiply with CPU results: %s\n", (true == resONEMKL) ? "PASS" : "FAIL");
 
     printf("\nNOTE: The Samples are not meant for performance measurements.\n");
 
@@ -369,18 +338,11 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
     free(h_B);
     free(h_C);
     free(reference);
-    checkCudaErrors(cudaFree(d_A));
-    checkCudaErrors(cudaFree(d_B));
-    checkCudaErrors(cudaFree(d_C));
+    sycl::free(d_A, q);
+    sycl::free(d_B, q);
+    sycl::free(d_C, q);
 
-    // cudaDeviceReset causes the driver to clean up all state. While
-    // not mandatory in normal operation, it is good practice.  It is also
-    // needed to ensure correct operation when the application is being
-    // profiled. Calling cudaDeviceReset causes all profile data to be
-    // flushed before the application exits
-    cudaDeviceReset();
-
-    if (resCUBLAS == true)
+    if (resONEMKL == true)
     {
         return EXIT_SUCCESS;    // return value = 1
     }
@@ -395,7 +357,7 @@ int matrixMultiply(int argc, char **argv, int devID, sMatrixSize &matrix_size)
 ////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
-    printf("[Matrix Multiply CUBLAS] - Starting...\n");
+    printf("[Matrix Multiply ONEMKL] - Starting...\n");
 
     int devID = 0, sizeMult = 5;
     sMatrixSize matrix_size;
