@@ -25,20 +25,18 @@
  *
  **************************************************************************/
 
-#include <CL/sycl.hpp>
-
-using namespace cl::sycl;
+#include <sycl/sycl.hpp>
 
 class PrivateMemory;
 
 /* Helper function to compute a globalID from a group and item in a
  * hierarchical parallel_for_work_item context */
-static inline cl::sycl::id<1> get_global_id(cl::sycl::group<1>& group,
-                                            cl::sycl::item<1>& item) {
+static inline sycl::id<1> get_global_id(sycl::group<1>& group,
+					sycl::item<1>& item) {
   auto groupID = group.get_id();
   auto localR = item.get_range();
   auto localID = item.get_id();
-  return cl::sycl::id<1>(groupID[0] * localR[0] + localID[0]);
+  return sycl::id<1>(groupID[0] * localR[0] + localID[0]);
 }
 
 /* This sample showcases the syntax of the private_memory interface. */
@@ -51,41 +49,39 @@ int main() {
   /* Any data on the device will be copied back to the host
    * after the block ends. */
   {
-    default_selector selector;
-
-    queue myQueue(selector);
+    sycl::queue myQueue(sycl::gpu_selector_v);
 
     /* We need to create a buffer in order to access data
      * from the SYCL devices. */
-    buffer<int, 1> buf(data, range<1>(nItems));
+    sycl::buffer<int, 1> buf(data, sycl::range<1>(nItems));
 
     /* This command group enqueues a kernel on myQueue
      * that adds the work-item id to each element of the
      * data array. Effectively, it creates an array of
      * consecutive integers. */
-    myQueue.submit([&](handler& cgh) {
-      auto ptr = buf.get_access<access::mode::read_write>(cgh);
+    myQueue.submit([&](sycl::handler& cgh) {
+      auto ptr = buf.get_access<sycl::access::mode::read_write>(cgh);
       /* We create a linear (one dimensional) group range, which
        * creates a work-item per element of the vector. */
-      auto groupRange = range<1>(nItems / nLocals);
+      auto groupRange = sycl::range<1>(nItems / nLocals);
       /* We create a linear (one dimensional) local range which defines the
        * workgroup size. */
-      auto localRange = range<1>(nLocals);
+      auto localRange = sycl::range<1>(nLocals);
 
-      /* parallel_for_work_group takes a cl::sycl::group as a parameter,
+      /* parallel_for_work_group takes a sycl::group as a parameter,
        * which has parallel_for_work_item as a method. */
-      auto hierarchicalKernel = [=](group<1> groupID) {
+      auto hierarchicalKernel = [=](sycl::group<1> groupID) {
         /* Unlike variables of any other type allocated in a
          * parallel_for_work_group scope, privateObj is allocated
          * per work-item and lives in work-item-private memory. */
-        private_memory<int> privateObj(groupID);
+	sycl::private_memory<int> privateObj(groupID);
 
-        groupID.parallel_for_work_item([&](h_item<1> itemID) {
+        groupID.parallel_for_work_item([&](sycl::h_item<1> itemID) {
           /* Assign the work-item global id into private memory. */
           privateObj(itemID) = itemID.get_global_id()[0];
         });
 
-        groupID.parallel_for_work_item([&](h_item<1> itemID) {
+        groupID.parallel_for_work_item([&](sycl::h_item<1> itemID) {
           /* Retrieve the global id stored in the previous
            * parallel_for_work_item call and store it in global memory. */
           auto globalID = privateObj(itemID);

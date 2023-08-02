@@ -1,8 +1,6 @@
 #include "argparse.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <vector>
-
-namespace sycl = cl::sycl;
 
 int main(int argc, char **argv) {
 
@@ -43,7 +41,7 @@ int main(int argc, char **argv) {
     // The buffer need to be destructed at the end of the scope to triger 
     // syncronization
     // Trivia: What happend if we create the buffer in the outer scope?
-    sycl::buffer<sycl::cl_int, 1> bufferA(A.data(), A.size());
+    sycl::buffer<int, 1> bufferA(A.data(), A.size());
 
     sycl::queue myQueue;
     std::cout << "Running on "
@@ -61,7 +59,7 @@ int main(int argc, char **argv) {
             //Need tp have a non void examplle
             accessorA[0];
 #ifdef __SYCL_DEVICE_ONLY__
-            auto idx = __spirv::initLocalInvocationId<1, cl::sycl::id<1>>();
+            auto idx = __spirv::initLocalInvocationId<1, sycl::id<1>>();
             accessorA[idx] = idx[0];
 #endif
           }); // End of the kernel function

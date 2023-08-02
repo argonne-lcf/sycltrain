@@ -13,7 +13,7 @@
 
 #include "esimd_test_utils.hpp"
 
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <CL/sycl/INTEL/esimd.hpp>
 #include <iostream>
 

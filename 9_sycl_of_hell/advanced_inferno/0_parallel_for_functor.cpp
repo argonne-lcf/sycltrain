@@ -1,7 +1,5 @@
 #include "argparse.hpp"
-#include <CL/sycl.hpp>
-
-namespace sycl = cl::sycl;
+#include <sycl/sycl.hpp>
 
 class generator_kernel_hw {
 

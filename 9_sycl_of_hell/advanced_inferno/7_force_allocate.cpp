@@ -1,9 +1,7 @@
 #include "argparse.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <iostream>
 #include <vector>
-
-namespace sycl = cl::sycl;
 
 // How to transform this function into a variadic one
 template <sycl::access::target Q, typename T, int I>

@@ -22,7 +22,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 SPDX-License-Identifier: MIT
 */
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
@@ -30,17 +30,14 @@ SPDX-License-Identifier: MIT
 #include <numeric>
 #include <random>
 
-using namespace cl::sycl;
-
 template <typename T, int dimensions>
 using local_accessor =
-    accessor<T, dimensions, access::mode::read_write, access::target::local>;
+    sycl::accessor<T, dimensions, sycl::access::mode::read_write, sycl::access::target::local>;
 
 int main(int argc, char *argv[]) {
   // Set up SYCL device and queue.
-  gpu_selector selector;
-  device dev = device(selector);
-  queue q = queue(dev);
+  sycl::device dev(sycl::gpu_selector_v);
+  sycl::queue q(dev);
 
   // Initialize input and output memory on the host
   const uint32_t N = 1024;
@@ -54,21 +51,21 @@ int main(int argc, char *argv[]) {
 
   {
     // Create SYCL buffers associated with input/output
-    buffer<float, 2> a_buf(a.data(), range<2>(N, N)),
-        b_buf(b.data(), range<2>(N, N)), c_buf(c.data(), range<2>(N, N));
+      sycl::buffer<float, 2> a_buf(a.data(), sycl::range<2>(N, N)),
+        b_buf(b.data(), sycl::range<2>(N, N)), c_buf(c.data(), sycl::range<2>(N, N));
 
-    q.submit([&](handler &cgh) {
-      auto a = a_buf.get_access<access::mode::read>(cgh);
-      auto b = b_buf.get_access<access::mode::read>(cgh);
-      auto c = c_buf.get_access<access::mode::read_write>(cgh);
+      q.submit([&](sycl::handler &cgh) {
+      auto a = a_buf.get_access<sycl::access::mode::read>(cgh);
+      auto b = b_buf.get_access<sycl::access::mode::read>(cgh);
+      auto c = c_buf.get_access<sycl::access::mode::read_write>(cgh);
 
-      auto a_tile = local_accessor<float, 2>(range<2>(B, B), cgh);
-      auto b_tile = local_accessor<float, 2>(range<2>(B, B), cgh);
+      auto a_tile = local_accessor<float, 2>(sycl::range<2>(B, B), cgh);
+      auto b_tile = local_accessor<float, 2>(sycl::range<2>(B, B), cgh);
 
-      range<2> global(N, N);
-      range<2> local(B, B);
+      sycl::range<2> global(N, N);
+      sycl::range<2> local(B, B);
       cgh.parallel_for<class matrix_mul>(
-          nd_range<2>(global, local), [=](nd_item<2> item) {
+          sycl::nd_range<2>(global, local), [=](sycl::nd_item<2> item) {
             int j = item.get_global_id(0);
             int i = item.get_global_id(1);
 
@@ -82,7 +79,7 @@ int main(int argc, char *argv[]) {
 
               // Wait for load into local memory to complete
               // Barrier synchronizes all work-items in this work-group
-              item.barrier(access::fence_space::local_space);
+              item.barrier(sycl::access::fence_space::local_space);
 
               // Compute matrix multiply using results in local memory
               for (int k = 0; k < B; ++k) {
@@ -91,7 +88,7 @@ int main(int argc, char *argv[]) {
 
               // Ensure all work-items are done before overwriting local memory
               // Barrier synchronizes all work-items in this work-group
-              item.barrier(access::fence_space::local_space);
+              item.barrier(sycl::access::fence_space::local_space);
             }
           });
     });

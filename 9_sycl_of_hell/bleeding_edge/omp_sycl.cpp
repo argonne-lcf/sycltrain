@@ -1,12 +1,12 @@
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <stdio.h>
  
 int main() {
   int resSycl = 1234;
   {
-    cl::sycl::buffer<int, 1> resBuffer(&resSycl, cl::sycl::range<1>(1));
-    cl::sycl::queue().submit([&](cl::sycl::handler &cgh) {
-        auto resAcc = resBuffer.get_access<cl::sycl::access::mode::write>(cgh);
+    sycl::buffer<int, 1> resBuffer(&resSycl, sycl::range<1>(1));
+    sycl::queue().submit([&](sycl::handler &cgh) {
+        auto resAcc = resBuffer.get_access<sycl::access::mode::write>(cgh);
         cgh.single_task<class X>([=]() {  resAcc[0] = 1; });
       });
   }

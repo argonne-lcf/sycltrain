@@ -7,11 +7,8 @@
 #include <random>
 #include <iostream>
 #include <limits>
-#include <CL/sycl.hpp>
-//#include "mkl_blas_sycl.hpp"
-#include "oneapi/mkl.hpp"
-
-using namespace cl::sycl;
+#include <sycl/sycl.hpp>
+#include <oneapi/mkl.hpp>
 
 // Matrix size constants
 #define SIZE     4800   // Must be a multiple of 8.
@@ -28,7 +25,7 @@ using namespace cl::sycl;
 //////////////////////////////////////////////////////////////////////////////////////////
 
 bool ValueSame(double a, double b) {
-  return std::fabs(a-b) < 1.0e-08;  
+  return std::fabs(a-b) < 1.0e-08;
 }
 
 int VerifyResult(double *c_A, double *c_B) {
@@ -91,7 +88,7 @@ int main() {
   B = new double[N*P]{};
   C_cblas = new double[M*P]{};
   C_serial = new double[M*P]{};
-  C_onemkl = new double[M*P]{};  
+  C_onemkl = new double[M*P]{};
 
   // prepare matrix data with ROW-major style
   // A(M, N)
@@ -116,16 +113,16 @@ int main() {
 
 #ifdef mkl_host
   // Resultant matrix: C_cblas
-  cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+  cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
   	          m, n, k, alpha, A, ldA, B, ldB, beta, C_cblas, ldC);
 #endif
 
   // Resultant matrix: C_onemkl
-  auto asyncHandler = [&](cl::sycl::exception_list eL) {
+  auto asyncHandler = [&](sycl::exception_list eL) {
     for (auto& e : eL) {
       try {
         std::rethrow_exception(e);
-      } catch (cl::sycl::exception& e) {
+      } catch (sycl::exception& e) {
         std::cout << e.what() << std::endl;
         std::cout << "fail" << std::endl;
         std::terminate();
@@ -137,26 +134,25 @@ int main() {
     // Initializing the devices queue with the default selector
     // The device queue is used to enqueue the kernels and encapsulates
     // all the states needed for execution
-    default_selector device_selector;
-    queue device_queue(device_selector, asyncHandler);
-    std::cout << "Device: " << device_queue.get_device().get_info<info::device::name>() << std::endl << std::endl;
+    sycl::queue device_queue(sycl::gpu_selector_v, asyncHandler);
+    std::cout << "Device: " << device_queue.get_device().get_info<sycl::info::device::name>() << std::endl << std::endl;
 
     // Creating 1D buffers for matrices which are bound to host memory array
-    buffer<double, 1> a{A, range<1>{M*N}};
-    buffer<double, 1> b{B, range<1>{N*P}};
-    buffer<double, 1> c{C_onemkl, range<1>{M*P}};
+    sycl::buffer<double, 1> a{A, sycl::range<1>{M*N}};
+    sycl::buffer<double, 1> b{B, sycl::range<1>{N*P}};
+    sycl::buffer<double, 1> c{C_onemkl, sycl::range<1>{M*P}};
 
-    oneapi::mkl::blas::gemm(device_queue, transA, transB, n, m, k, alpha, b, ldB, a, ldA, beta, c, ldC); // row-major    
+    oneapi::mkl::blas::row_major::gemm(device_queue, transA, transB, n, m, k, alpha, b, ldB, a, ldA, beta, c, ldC); // row-major
 
     device_queue.wait();
   }
-  catch(cl::sycl::exception const& e) {
-    std::cout << "\t\tSYCL exception during GEMM\n" << e.what() << std::endl << "OpenCL status: " << e.get_cl_code() << std::endl;
+  catch(sycl::exception const& e) {
+    std::cout << "\t\tSYCL exception during GEMM\n" << e.what() << std::endl << "OpenCL status: " << e.code() << std::endl;
   }
-  
+
 
   int result_serial;
-  std::cout << "Verify results between OneMKL & Serial: ";  
+  std::cout << "Verify results between OneMKL & Serial: ";
   result_serial = VerifyResult(C_onemkl, C_serial);
 
 #ifdef mkl_host
