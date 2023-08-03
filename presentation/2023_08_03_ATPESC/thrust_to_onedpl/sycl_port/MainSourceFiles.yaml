@@ -1,0 +1,148 @@
+---
+MainSourceFile:  MainSrcFiles_placehold
+Replacements:
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          0
+    Length:          37
+    ReplacementText: "#include <oneapi/dpl/execution>\n#include <oneapi/dpl/algorithm>\n#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n#include <dpct/dpl_utils.hpp>\n#include <functional>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          37
+    Length:          31
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          68
+    Length:          34
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          102
+    Length:          32
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          251
+    Length:          9
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          260
+    Length:          10
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          468
+    Length:          21
+    ReplacementText: 'dpct::device_vector'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          575
+    Length:          12
+    ReplacementText: 'std::plus'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Offset:          664
+    Length:          88
+    ReplacementText: 'std::sqrt( std::transform_reduce(oneapi::dpl::execution::make_device_policy(dpct::get_default_queue()), d_x.begin(), d_x.end(), init, binary_op, unary_op) )'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl/thrust_transform_reduce.cu'
+    Digest:          eff6a863db1c208fb5ad73f55493082e
+DpctVersion:     17.0.0
+MainHelperFileName: ''
+USMLevel:        ''
+FeatureMap:      {}
+CompileTargets:  {}
+OptionMap:
+  AnalysisScopePath:
+    Value:           '/lus/eagle/projects/NWChemEx_aesp/abagusetty/sycltrain/presentation/2023_08_03_ATPESC/thrust_to_onedpl'
+    Specified:       false
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           ''
+    Specified:       false
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  EnablepProfiling:
+    Value:           'false'
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitClNamespace:
+    Value:           'false'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionDDFlag:
+    Value:           '0'
+    Specified:       false
+  ExtensionDEFlag:
+    Value:           '4294967295'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

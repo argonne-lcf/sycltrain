@@ -2,7 +2,7 @@ add_exe(4_buffer_id_introspection)
 add_exe(omp_sycl)
 
 ##does not compile: reduction.hpp:1816:10: error: no matching constructor for initialization of ...
-#add_exe(reduction) 
+add_exe(reduction) 
 
 ##does not compile: vadd_usm.cpp:53:36: error: expected namespace name
 #add_exe(vadd_usm)
