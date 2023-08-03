@@ -1,7 +1,4 @@
-#include <CL/sycl.hpp>
-
-// Maybe in the futur sycl will note be in the 'cl' namespace
-namespace sycl = cl::sycl;
+#include <sycl/sycl.hpp>
 
 int main() {
   sycl::queue Q;
@@ -12,11 +9,11 @@ int main() {
   sycl::program p(Q.get_context());
   // build_with_source may take an aditioanl argument to pass compile flags
   p.build_with_source(R"EOL(__kernel void hello_world() {printf("Hello world\n");} )EOL");
-        
-  //  _               _                          
-  // / \ ._   _  ._  /  |    |/  _  ._ ._   _  | 
-  // \_/ |_) (/_ | | \_ |_   |\ (/_ |  | | (/_ | 
-  //     |                                      
+
+  //  _               _
+  // / \ ._   _  ._  /  |    |/  _  ._ ._   _  |
+  // \_/ |_) (/_ | | \_ |_   |\ (/_ |  | | (/_ |
+  //     |
  Q.submit([&](sycl::handler &cgh) {
     // Will launch an opencl kernel
     // Use cgh.set_args($acceors) if required by your kermel

@@ -1,0 +1,598 @@
+---
+MainSourceFile:  MainSrcFiles_placehold
+Replacements:
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          2444
+    Length:          0
+    ReplacementText: "#include <sycl/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          2481
+    Length:          0
+    ReplacementText: "\n#include <dpct/blas_utils.hpp>\n\n#include <cmath>\n\n#include <chrono>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          2499
+    Length:          26
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          2525
+    Length:          23
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          2773
+    Length:          260
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          6317
+    Length:          0
+    ReplacementText: ' try '
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          6441
+    Length:          11
+    ReplacementText: 'dpct::err0'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          6525
+    Length:          21
+    ReplacementText: 'devID = dpct::dev_mgr::instance().current_device_id()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          6553
+    Length:          150
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          7639
+    Length:          0
+    ReplacementText: "\ncatch (sycl::exception const &exc) {\n  std::cerr << exc.what() << \"Exception caught at file:\" << __FILE__ << \", line:\" << __LINE__ << std::endl;\n  std::exit(1);\n}"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          7934
+    Length:          0
+    ReplacementText: "\n    dpct::device_ext &dev_ct1 = dpct::get_current_device();\n    sycl::queue &q_ct1 = dev_ct1.default_queue();"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          7939
+    Length:          14
+    ReplacementText: 'dpct::device_info'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          7987
+    Length:          23
+    ReplacementText: 'DPCT_CHECK_ERROR(dpct::dev_mgr::instance().get_device'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          8011
+    Length:          13
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          8030
+    Length:          0
+    ReplacementText: '.get_device_info(deviceProp))'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          8085
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1005:0: The SYCL device version is different from CUDA Compute Compatibility. You may need to rewrite this code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          8118
+    Length:          5
+    ReplacementText: 'get_major_version()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9040
+    Length:          38
+    ReplacementText: 'DPCT_CHECK_ERROR(d_A = (float *)sycl::malloc_device(mem_size_A, q_ct1))'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9101
+    Length:          38
+    ReplacementText: 'DPCT_CHECK_ERROR(d_B = (float *)sycl::malloc_device(mem_size_B, q_ct1))'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9162
+    Length:          10
+    ReplacementText: 'DPCT_CHECK_ERROR(q_ct1.memcpy'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9193
+    Length:          24
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9218
+    Length:          0
+    ReplacementText: '.wait())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9241
+    Length:          10
+    ReplacementText: 'DPCT_CHECK_ERROR(q_ct1.memcpy'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9272
+    Length:          24
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9297
+    Length:          0
+    ReplacementText: '.wait())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9320
+    Length:          38
+    ReplacementText: 'DPCT_CHECK_ERROR(d_C = (float *)sycl::malloc_device(mem_size_C, q_ct1))'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9400
+    Length:          4
+    ReplacementText: 'sycl::range<3>'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9413
+    Length:          22
+    ReplacementText: 1, block_size, block_size
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9442
+    Length:          4
+    ReplacementText: 'sycl::range<3>'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9452
+    Length:          58
+    ReplacementText: '1, matrix_size.uiHC / threads[1], matrix_size.uiWC / threads[2]'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9748
+    Length:          14
+    ReplacementText: 'dpct::queue_ptr'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9779
+    Length:          11
+    ReplacementText: 'dpct::event_ptr'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9803
+    Length:          0
+    ReplacementText: "\n        std::chrono::time_point<std::chrono::steady_clock> start_ct1;\n        std::chrono::time_point<std::chrono::steady_clock> stop_ct1;"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9829
+    Length:          21
+    ReplacementText: 'DPCT_CHECK_ERROR(handle = &q_ct1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          9925
+    Length:          183
+    ReplacementText: 'DPCT_CHECK_ERROR(oneapi::mkl::blas::column_major::gemm(*handle, oneapi::mkl::transpose::nontrans, oneapi::mkl::transpose::nontrans, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, beta, d_C, matrix_size.uiWB)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10108
+    Length:          0
+    ReplacementText: ')'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10194
+    Length:          23
+    ReplacementText: 'DPCT_CHECK_ERROR(start = new sycl::event())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10244
+    Length:          22
+    ReplacementText: 'DPCT_CHECK_ERROR(stop = new sycl::event())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10304
+    Length:          0
+    ReplacementText: "        /*\n        DPCT1012:1: Detected kernel execution time measurement pattern and generated an initial code for time measurements in SYCL. You can change the way time is measured depending on your goals.\n        */\n        /*\n        DPCT1024:2: The original code returned the error code that was further consumed by the program logic. This original code was replaced with 0. You may need to rewrite the program logic consuming the error code.\n        */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10312
+    Length:          0
+    ReplacementText: "start_ct1 = std::chrono::steady_clock::now(); \n        "
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10328
+    Length:          28
+    ReplacementText: '0'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10525
+    Length:          183
+    ReplacementText: 'DPCT_CHECK_ERROR(oneapi::mkl::blas::column_major::gemm(*handle, oneapi::mkl::transpose::nontrans, oneapi::mkl::transpose::nontrans, matrix_size.uiWB, matrix_size.uiHA, matrix_size.uiWA, alpha, d_B, matrix_size.uiWB, d_A, matrix_size.uiWA, beta, d_C, matrix_size.uiWB)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10708
+    Length:          0
+    ReplacementText: ')'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10784
+    Length:          0
+    ReplacementText: "        /*\n        DPCT1012:3: Detected kernel execution time measurement pattern and generated an initial code for time measurements in SYCL. You can change the way time is measured depending on your goals.\n        */\n        /*\n        DPCT1024:4: The original code returned the error code that was further consumed by the program logic. This original code was replaced with 0. You may need to rewrite the program logic consuming the error code.\n        */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10792
+    Length:          0
+    ReplacementText: "stop_ct1 = std::chrono::steady_clock::now(); \n        "
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10808
+    Length:          27
+    ReplacementText: '0'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10910
+    Length:          26
+    ReplacementText: '0'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          10996
+    Length:          45
+    ReplacementText: 'DPCT_CHECK_ERROR((msecTotal = std::chrono::duration<float, std::milli>(stop_ct1 - start_ct1).count()))'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          11597
+    Length:          10
+    ReplacementText: 'DPCT_CHECK_ERROR(q_ct1.memcpy'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          11633
+    Length:          24
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          11658
+    Length:          0
+    ReplacementText: '.wait())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          11716
+    Length:          21
+    ReplacementText: 'DPCT_CHECK_ERROR(handle = nullptr)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          12585
+    Length:          13
+    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(d_A, q_ct1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          12598
+    Length:          0
+    ReplacementText: ')'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          12621
+    Length:          13
+    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(d_B, q_ct1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          12634
+    Length:          0
+    ReplacementText: ')'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          12657
+    Length:          13
+    ReplacementText: 'DPCT_CHECK_ERROR(sycl::free(d_C, q_ct1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          12670
+    Length:          0
+    ReplacementText: ')'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Offset:          13010
+    Length:          17
+    ReplacementText: 'dev_ct1.reset()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl/cublas.cu'
+    Digest:          2b964716aca2a996c3c5fd7667bf619e
+DpctVersion:     17.0.0
+MainHelperFileName: ''
+USMLevel:        ''
+FeatureMap:      {}
+CompileTargets:  {}
+OptionMap:
+  AnalysisScopePath:
+    Value:           '/lus/eagle/projects/NWChemEx_aesp/abagusetty/atpesc2023_sycl/cublas_to_onemkl'
+    Specified:       false
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           ''
+    Specified:       false
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  EnablepProfiling:
+    Value:           'false'
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitClNamespace:
+    Value:           'false'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionDDFlag:
+    Value:           '0'
+    Specified:       false
+  ExtensionDEFlag:
+    Value:           '4294967295'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

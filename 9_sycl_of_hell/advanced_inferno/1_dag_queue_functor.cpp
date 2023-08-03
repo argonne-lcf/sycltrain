@@ -1,10 +1,8 @@
 #include "argparse.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <iostream>
 #include <numeric>
 #include <vector>
-
-namespace sycl = cl::sycl;
 
 template <typename TAccessorW, typename TAccessorR>
 class memcopy_kernel {
@@ -21,8 +19,8 @@ private:
 };
 
 void f_copy(sycl::handler &cgh, int global_range,
-            sycl::buffer<sycl::cl_int, 1> bufferW,
-            sycl::buffer<sycl::cl_int, 1> bufferR) {
+            sycl::buffer<int, 1> bufferW,
+            sycl::buffer<int, 1> bufferR) {
   auto accessorW = bufferW.get_access<sycl::access::mode::discard_write>(cgh);
   auto accessorR = bufferR.get_access<sycl::access::mode::read>(cgh);
   cgh.parallel_for(sycl::range<1>(global_range),
@@ -71,8 +69,8 @@ int main(int argc, char **argv) {
   // Create buffers
   sycl::buffer  bufferA(A);
   // Empty buffer
-  sycl::buffer<sycl::cl_int, 1> bufferB(global_range);
-  sycl::buffer<sycl::cl_int, 1> bufferC(global_range);
+  sycl::buffer<int, 1> bufferB(global_range);
+  sycl::buffer<int, 1> bufferC(global_range);
 
   Q.submit(std::bind(f_copy, std::placeholders::_1, global_range,
                      bufferB, bufferA));

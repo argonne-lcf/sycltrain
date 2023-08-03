@@ -1,8 +1,6 @@
 #include "argparse.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <vector>
-
-namespace sycl = cl::sycl;
 
 int main(int argc, char **argv) {
 

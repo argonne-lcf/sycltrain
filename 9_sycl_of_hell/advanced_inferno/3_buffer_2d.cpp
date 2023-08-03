@@ -1,8 +1,6 @@
 #include "argparse.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <vector>
-
-namespace sycl = cl::sycl;
 
 template <class T> class Matrix {
 public:

@@ -37,15 +37,13 @@ int main(int argc, char **argv) {
   // | | (_|        | (_| | | (_| (/_
   //           __              _|
 
-  // Selectors determine which device kernels will be dispatched to.
-  sycl::default_selector selector;
   // Create you async handler
   sycl::async_handler ah = [](sycl::exception_list elist) {
     for (auto e : elist)
       std::rethrow_exception(e);
   };
 
-  sycl::queue Q(selector, ah);
+  sycl::queue Q(sycl::gpu_selector_v, ah);
   std::cout << "Running on "
             << Q.get_device().get_info<sycl::info::device::name>()
             << "\n";

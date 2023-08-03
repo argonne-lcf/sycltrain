@@ -1,15 +1,12 @@
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <iostream>
 #include <stdio.h>
 
 #define WORKSIZE 256
 #define WORKITEM 64
 
-using namespace cl;
-
 int main(int argc, char **argv) {
-  const sycl::device_selector &gpu_dev = sycl::gpu_selector();
-  sycl::queue q(gpu_dev);
+  sycl::queue q(sycl::gpu_selector_v);
 
   q.submit([&](sycl::handler &cgh) {
     auto acc = sycl::accessor<int, 1, sycl::access::mode::read_write,

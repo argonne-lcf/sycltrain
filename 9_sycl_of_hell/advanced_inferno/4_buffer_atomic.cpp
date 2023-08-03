@@ -1,16 +1,14 @@
 #include "argparse.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <vector>
-
-namespace sycl = cl::sycl;
 
 // Note: please don't use std::atomic_ref<T> in the device-code
 template <typename T>
 using relaxed_atomic_ref =
-    sycl::ONEAPI::atomic_ref< T,
-                             sycl::ONEAPI::memory_order::relaxed,
-                             sycl::ONEAPI::memory_scope::device,
-                             sycl::access::address_space::global_space>;
+    sycl::atomic_ref< T,
+		      sycl::memory_order::relaxed,
+		      sycl::memory_scope::device,
+		      sycl::access::address_space::global_space>;
 
 int main(int argc, char **argv) {
 
@@ -64,7 +62,7 @@ int main(int argc, char **argv) {
       cgh.parallel_for(
           sycl::range<1>(global_range), [=](auto _) {
             accessorA[0] +=1 ;
-            auto atm = relaxed_atomic_ref<sycl::cl_int>(accessorA_atom[0]);
+            auto atm = relaxed_atomic_ref<int>(accessorA_atom[0]);
             atm.fetch_add( 1 );
           }); 
     });   
