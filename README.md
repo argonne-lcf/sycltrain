@@ -13,7 +13,7 @@
 ```
 
 
-# Training examples for SYCL! 🚂
+# Training Examples for SYCL! 🚂
 
 - The folder `presentation` contains slides of diverse Argonne Performance Engineering Group presentations.
 - The `9_sycl_of_hell` folder contains code explanation. From simple hello-world to more advanced C++ trickery. Please set the correct `CXX` / `CCFLAGS` environment variable or edit the `Makefile` accordingly.
