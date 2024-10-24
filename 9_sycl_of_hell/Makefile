@@ -1,15 +1,15 @@
-CXX ?= dpcpp
-CXXFLAGS ?= -std=c++17
+CXX ?= icpx
+CXXFLAGS ?= -fsycl
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
 RUN :=  $(addprefix run_, $(PRGS))
 
-.PHONY: run_all
-run_all: $(sort $(RUN))
-
 .PHONY: all
 all: $(PRGS)
+
+.PHONY: run_all
+run_all: $(sort $(RUN))
 
 %: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $^

@@ -1,8 +1,6 @@
 #include "argparse.hpp"
 #include <sycl/sycl.hpp>
 
-
-
 int main(int argc, char **argv) {
 
   //  _                ___
@@ -11,57 +9,39 @@ int main(int argc, char **argv) {
   //                           |
   argparse::ArgumentParser program("5_copy_device_to_host");
 
-  program.add_argument("-g","--global")
-    .help("Global Range")
-    .default_value(1)
-    .action([](const std::string& value) { return std::stoi(value); });
+  program.add_argument("-g", "--global")
+      .help("Global Range")
+      .default_value(1)
+      .action([](const std::string &value) { return std::stoi(value); });
 
   try {
     program.parse_args(argc, argv);
-  }
-  catch (const std::runtime_error& err) {
+  } catch (const std::runtime_error &err) {
     std::cout << err.what() << std::endl;
     std::cout << program;
     exit(0);
   }
 
   const auto global_range = program.get<int>("-g");
- 
-  //  _       _   _
-  // |_)    _|_ _|_ _  ._
-  // |_) |_| |   | (/_ |
+
+  //    _                ___               _
+  //   | \  _. _|_  _.    | ._ _. ._   _ _|_ _  ._
+  //   |_/ (_|  |_ (_|    | | (_| | | _>  | (/_ |
   //
-
-  // Create array
-  std::vector<int> A(global_range);
-  // The buffer is created outside of the scope
-  sycl::buffer bufferA(A);
-
   sycl::queue Q;
-  std::cout << "Running on "
-            << Q.get_device().get_info<sycl::info::device::name>()
-            << "\n";
- 
-  // Create a command_group to issue command to the group
-  Q.submit([&](sycl::handler &cgh) {
-      sycl::accessor accessorA{bufferA, cgh, sycl::write_only, sycl::no_init};
-      cgh.parallel_for(global_range, [=](sycl::id<1> idx) {accessorA[idx] = idx;});
-  }); // SYCL Queue are by default out-of-order
-  // But accessors will handle the dependency dag for you
+  std::cout << "Running on " << Q.get_device().get_info<sycl::info::device::name>() << "\n";
 
-  // Now update the host buffer 
-  Q.submit([&](sycl::handler &cgh) {
-      sycl::accessor accessorA{bufferA, cgh, sycl::read_only};
-      // If you can prove that `bufferA` have no internal copy
-      cgh.update_host(accessorA);
-      // else one can use the more general
-      // cgh.copy(accessorA,A.data());
-  });
-  // The synchronization append at the buffer destructor,
-  // buffer is at the global scope so we need to explicitly wait
-  Q.wait();
+  // Allocate Device Memory
+  int *A = sycl::malloc_device<int>(global_range, Q);
+  // Submit blocking kernel who use the memory
+  Q.parallel_for(global_range, [=](auto id) { A[id] = id; }).wait();
+  // Allocate Host Memory
+  std::vector<int> A_host(global_range);
+  // Copy the device memory to the host
+  Q.copy<int>(A, A_host.data(), global_range).wait();
+  sycl::free(A, Q);
 
   for (size_t i = 0; i < global_range; i++)
-    std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
+    std::cout << "A_host[ " << i << " ] = " << A_host[i] << std::endl;
   return 0;
 }
