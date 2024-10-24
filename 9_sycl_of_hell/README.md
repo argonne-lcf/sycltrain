@@ -31,4 +31,4 @@ cmake --build build/ -j
 - `5_copy_device_to_host` How to data-transfer explicitly (`./5_copy_device_to_host -g 8`)
 - `6_in_order` How to deal with dependencies: In order (`./6_in_order -g 8 `) 
 - `7_out_of_order` How to deal with dependencies: The Correct way (`./7_out_of_order -g 8`)
-- `8_reduction` How to do reduction (`/8_reduction`)
+- `8_reduction` How to do reduction (`./8_reduction -g 12`)
