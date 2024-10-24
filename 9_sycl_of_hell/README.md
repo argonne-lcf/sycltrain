@@ -1,10 +1,13 @@
 # How to compile
 
-Make
+## Goold Old Make
+
 ```
 CXX=icpx CXXFLAGS=-fsycl make -j
+```
 
-Cmake
+## Fancy "new" Cmake
+
 ```
 cmake -S . -B build
 cmake --build build/ -j
