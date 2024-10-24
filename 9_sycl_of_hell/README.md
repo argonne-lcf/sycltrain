@@ -15,7 +15,7 @@ cmake -S . -B build
 cmake --build build/ -j
 ```
 
-# List of program
+# List of programs
 
 - `0_tiny_sycl_info.cpp` How to get information on platform and devices ( `./0_tiny_sycl_info`)
 - `1_my_first_kernel.cpp`  How to create queues and command groups ( `./1_my_first_kernel`)
