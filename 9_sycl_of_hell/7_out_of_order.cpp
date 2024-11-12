@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
   auto e = Q.parallel_for(global_range, [=](auto id) { A[id] = id; });
   // Copy will wait that `e` finished before starting executing
   // The command submission is still asynchronous
-  Q.copy<int>(A, A_host.data(), global_range, e).wait();
+  Q.copy(A, A_host.data(), global_range, e).wait();
   sycl::free(A, Q);
 
   for (size_t i = 0; i < global_range; i++)

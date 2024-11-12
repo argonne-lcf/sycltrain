@@ -34,11 +34,13 @@ int main(int argc, char **argv) {
   // Allocate Device Memory
   int *A = sycl::malloc_device<int>(global_range, Q);
   // Submit blocking kernel who use the memory
-  Q.parallel_for(global_range, [=](auto id) { A[id] = id; }).wait();
+  Q.parallel_for(global_range, [=](auto id) { A[id] = id; });
+  Q.wait();
   // Allocate Host Memory
   std::vector<int> A_host(global_range);
   // Copy the device memory to the host
-  Q.copy<int>(A, A_host.data(), global_range).wait();
+  Q.copy(A, A_host.data(), global_range);
+  Q.wait();
   sycl::free(A, Q);
 
   for (size_t i = 0; i < global_range; i++)

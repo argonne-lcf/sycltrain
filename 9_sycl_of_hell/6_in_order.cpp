@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
   // Allocate Host Memory
   std::vector<int> A_host(global_range);
   // Copy the device memory to the host
-  Q.copy<int>(A, A_host.data(), global_range);
+  Q.copy(A, A_host.data(), global_range);
   // Wait for all the commands to have finished
   Q.wait();
   sycl::free(A, Q);
