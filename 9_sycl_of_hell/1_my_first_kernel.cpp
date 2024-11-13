@@ -21,6 +21,5 @@ int main() {
   // We wait for all the commands submited to the queue to complete
   // In this case only one
   Q.wait();
-
   return 0;
 }

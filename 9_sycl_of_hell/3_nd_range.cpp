@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
   } catch (const std::runtime_error &err) {
     std::cerr << err.what() << std::endl;
     std::cout << program;
-    exit(0);
+    std::exit(1);
   }
 
   const auto global_range = program.get<int>("-g");
