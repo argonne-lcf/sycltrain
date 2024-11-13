@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   try {
     program.parse_args(argc, argv);
   } catch (const std::runtime_error &err) {
-    std::cout << err.what() << std::endl;
+    std::cerr << err.what() << std::endl;
     std::cout << program;
     exit(0);
   }
@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
   // nd_range, generate a nd_item who allow use to query
   // loop dispach information
   Q.parallel_for(sycl::nd_range<1>{global_range, local_range}, [=](sycl::nd_item<1> idx) {
+    // get_global_id return a `size_t`, so implicit narrowing
     const int world_rank = idx.get_global_id(0);
     const int work_size = idx.get_global_range(0);
     const int local_rank = idx.get_local_id(0);
