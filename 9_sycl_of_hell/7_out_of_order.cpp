@@ -29,10 +29,11 @@ int main(int argc, char **argv) {
   //   \_/ |_| |_   (_) |    \_/ | (_| (/_ |
   //
   sycl::queue Q;
-  std::cout << "Running on " << Q.get_device().get_info<sycl::info::device::name>() << "\n";
+  std::cout << "Running on "
+            << Q.get_device().get_info<sycl::info::device::name>() << "\n";
 
   // Allocate Device and Host Memory
-  int *A = sycl::malloc_device<int>(global_range, Q);
+  int             *A = sycl::malloc_device<int>(global_range, Q);
   std::vector<int> A_host(global_range);
 
   // Submit non-blocking commands, chained by dependencies
