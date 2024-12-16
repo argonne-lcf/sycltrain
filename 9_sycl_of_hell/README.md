@@ -2,7 +2,7 @@
 
 # How to compile
 
-## Goold Old Make
+## Good Old Make
 
 ```
 # Aurora
@@ -18,7 +18,7 @@ CXX=clang++ CXXFLAGS="-fsycl -fsycl-targets=nvptx64-nvidia-cuda -Xsycl-target-ba
 
 ```
 module load cmake
-./configure
+./configure-cmake
 ./9_sycl_of_hell -install
 ```
 
