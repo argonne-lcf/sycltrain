@@ -2,11 +2,12 @@
 
 # How to compile
 
-## Goold Old Make
+## Good Old Make
 
 ```
 # Aurora
 CXX=icpx CXXFLAGS=-fsycl make -j
+
 # Polaris
 module use /soft/modulefiles
 module load oneapi/upstream
@@ -17,8 +18,8 @@ CXX=clang++ CXXFLAGS="-fsycl -fsycl-targets=nvptx64-nvidia-cuda -Xsycl-target-ba
 
 ```
 module load cmake
-cmake -S . -B build
-cmake --build build/ -j
+./configure-cmake
+./9_sycl_of_hell -install
 ```
 
 # List of programs

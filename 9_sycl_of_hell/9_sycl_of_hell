@@ -1,0 +1,82 @@
+#!/bin/bash
+
+function print_help() {
+  echo "Usage: $0 [options]"
+  echo "Options:"
+  echo "  -help Print this help message and exit."
+  echo "  -install Install sycl examples."
+  echo "  -format Format the source code with clang-format."
+  echo "  -format-check Check if source formatting is compliant with clang-format."
+  echo "  -tidy Run clang-tidy."
+}
+
+SYCL_TRAIN_SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SYCL_TRAIN_STATE_PATH="${SYCL_TRAIN_SOURCE_DIR}/.9_sycl_of_hell_state"
+
+# Read state variables created by `configure`.
+if [[ -f "${SYCL_TRAIN_STATE_PATH}" ]]; then
+  source "${SYCL_TRAIN_STATE_PATH}"
+else
+  echo "Error: You should run ./configure before running ${0}."
+  exit 1
+fi
+
+# Set default values.
+: ${SYCL_TRAIN_INSTALL:=NO}
+: ${SYCL_TRAIN_FORMAT:=NO}
+: ${SYCL_TRAIN_FORMAT_CHECK:=NO}
+: ${SYCL_TRAIN_TIDY:=NO}
+
+if [[ $# -eq 0 ]]; then
+  print_help
+  exit 1
+fi
+
+# Handle command line arguments.
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -help)
+      print_help
+      exit 0
+      ;;
+    -install)
+      SYCL_TRAIN_INSTALL="YES"
+      shift
+      ;;
+    -format)
+      SYCL_TRAIN_FORMAT="YES"
+      shift
+      ;;
+    -format-check)
+      SYCL_TRAIN_FORMAT_CHECK="YES"
+      shift
+      ;;
+    -tidy)
+      SYCL_TRAIN_TIDY="YES"
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      print_help
+      exit 1
+      ;;
+  esac
+done
+
+if [[ "${SYCL_TRAIN_FORMAT}" == "YES" ]]; then
+  cmake --build ${SYCL_TRAIN_BUILD_DIR} --target format --parallel 4
+fi
+
+if [[ "${SYCL_TRAIN_FORMAT_CHECK}" == "YES" ]]; then
+  cmake --build ${SYCL_TRAIN_BUILD_DIR} --target format-check --parallel 4
+fi
+
+if [[ "${SYCL_TRAIN_TIDY}" == "YES" ]]; then
+  cmake --build ${SYCL_TRAIN_BUILD_DIR} --target tidy --parallel 4
+fi
+
+if [[ "${SYCL_TRAIN_INSTALL}" == "YES" ]]; then
+  cmake --build ${SYCL_TRAIN_BUILD_DIR} --target install --parallel 4
+fi
+
+exit $?
