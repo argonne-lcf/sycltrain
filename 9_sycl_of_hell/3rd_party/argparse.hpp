@@ -36,6 +36,7 @@ SOFTWARE.
 #include <algorithm>
 #include <any>
 #include <array>
+#include <set>
 #include <charconv>
 #include <cstdlib>
 #include <functional>
@@ -47,7 +48,6 @@ SOFTWARE.
 #include <map>
 #include <numeric>
 #include <optional>
-#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -129,7 +129,9 @@ template <typename T> std::string repr(T const &val) {
         out << "...";
       }
     }
-    if (size > 0) { out << repr(*std::prev(val.end())); }
+    if (size > 0) {
+      out << repr(*std::prev(val.end()));
+    }
     out << "}";
     return out.str();
   } else if constexpr (IsStreamable<T>) {
@@ -143,25 +145,25 @@ template <typename T> std::string repr(T const &val) {
 
 namespace {
 
-template <typename T> constexpr bool standard_signed_integer      = false;
-template <> constexpr bool standard_signed_integer<signed char>   = true;
-template <> constexpr bool standard_signed_integer<short int>     = true;
-template <> constexpr bool standard_signed_integer<int>           = true;
-template <> constexpr bool standard_signed_integer<long int>      = true;
+template <typename T> constexpr bool standard_signed_integer = false;
+template <> constexpr bool standard_signed_integer<signed char> = true;
+template <> constexpr bool standard_signed_integer<short int> = true;
+template <> constexpr bool standard_signed_integer<int> = true;
+template <> constexpr bool standard_signed_integer<long int> = true;
 template <> constexpr bool standard_signed_integer<long long int> = true;
 
-template <typename T> constexpr bool standard_unsigned_integer      = false;
+template <typename T> constexpr bool standard_unsigned_integer = false;
 template <> constexpr bool standard_unsigned_integer<unsigned char> = true;
 template <> constexpr bool standard_unsigned_integer<unsigned short int> = true;
-template <> constexpr bool standard_unsigned_integer<unsigned int>       = true;
-template <> constexpr bool standard_unsigned_integer<unsigned long int>  = true;
+template <> constexpr bool standard_unsigned_integer<unsigned int> = true;
+template <> constexpr bool standard_unsigned_integer<unsigned long int> = true;
 template <>
 constexpr bool standard_unsigned_integer<unsigned long long int> = true;
 
 } // namespace
 
-constexpr int radix_2  = 2;
-constexpr int radix_8  = 8;
+constexpr int radix_2 = 2;
+constexpr int radix_8 = 8;
 constexpr int radix_10 = 10;
 constexpr int radix_16 = 16;
 
@@ -197,14 +199,14 @@ constexpr bool starts_with(std::basic_string_view<CharT, Traits> prefix,
 
 enum class chars_format {
   scientific = 0xf1,
-  fixed      = 0xf2,
-  hex        = 0xf4,
-  binary     = 0xf8,
-  general    = fixed | scientific
+  fixed = 0xf2,
+  hex = 0xf4,
+  binary = 0xf8,
+  general = fixed | scientific
 };
 
 struct ConsumeBinaryPrefixResult {
-  bool             is_binary;
+  bool is_binary;
   std::string_view rest;
 };
 
@@ -219,7 +221,7 @@ constexpr auto consume_binary_prefix(std::string_view s)
 }
 
 struct ConsumeHexPrefixResult {
-  bool             is_hexadecimal;
+  bool is_hexadecimal;
   std::string_view rest;
 };
 
@@ -238,9 +240,11 @@ template <class T, auto Param>
 inline auto do_from_chars(std::string_view s) -> T {
   T x{0};
   auto [first, last] = pointer_range(s);
-  auto [ptr, ec]     = std::from_chars(first, last, x, Param);
+  auto [ptr, ec] = std::from_chars(first, last, x, Param);
   if (ec == std::errc()) {
-    if (ptr == last) { return x; }
+    if (ptr == last) {
+      return x;
+    }
     throw std::invalid_argument{"pattern '" + std::string(s) +
                                 "' does not match to the end"};
   }
@@ -355,8 +359,8 @@ template <class T> struct parse_number<T> {
 
 namespace {
 
-template <class T> inline const auto generic_strtod  = nullptr;
-template <> inline const auto generic_strtod<float>  = ARGPARSE_CUSTOM_STRTOF;
+template <class T> inline const auto generic_strtod = nullptr;
+template <> inline const auto generic_strtod<float> = ARGPARSE_CUSTOM_STRTOF;
 template <> inline const auto generic_strtod<double> = ARGPARSE_CUSTOM_STRTOD;
 template <>
 inline const auto generic_strtod<long double> = ARGPARSE_CUSTOM_STRTOLD;
@@ -371,10 +375,12 @@ template <class T> inline auto do_strtod(std::string const &s) -> T {
   auto [first, last] = pointer_range(s);
   char *ptr;
 
-  errno  = 0;
+  errno = 0;
   auto x = generic_strtod<T>(first, &ptr);
   if (errno == 0) {
-    if (ptr == last) { return x; }
+    if (ptr == last) {
+      return x;
+    }
     throw std::invalid_argument{"pattern '" + s +
                                 "' does not match to the end"};
   }
@@ -498,7 +504,9 @@ template <class T> struct parse_number<T, chars_format::fixed> {
 
 template <typename StrIt>
 std::string join(StrIt first, StrIt last, const std::string &separator) {
-  if (first == last) { return ""; }
+  if (first == last) {
+    return "";
+  }
   std::stringstream value;
   value << *first;
   ++first;
@@ -520,7 +528,7 @@ template <typename T> struct can_invoke_to_string {
 };
 
 template <typename T> struct IsChoiceTypeSupported {
-  using CleanType         = typename std::decay<T>::type;
+  using CleanType = typename std::decay<T>::type;
   static const bool value = std::is_integral<CleanType>::value ||
                             std::is_same<CleanType, std::string>::value ||
                             std::is_same<CleanType, std::string_view>::value ||
@@ -542,8 +550,7 @@ std::size_t get_levenshtein_distance(const StringType &s1,
       } else if (s1[i - 1] == s2[j - 1]) {
         dp[i][j] = dp[i - 1][j - 1];
       } else {
-        dp[i][j] = 1 + std::min<std::size_t>(
-                           {dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]});
+        dp[i][j] = 1 + std::min<std::size_t>({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]});
       }
     }
   }
@@ -573,10 +580,10 @@ std::string get_most_similar_string(const std::map<std::string, ValueType> &map,
 enum class nargs_pattern { optional, any, at_least_one };
 
 enum class default_arguments : unsigned int {
-  none    = 0,
-  help    = 1,
+  none = 0,
+  help = 1,
   version = 2,
-  all     = help | version,
+  all = help | version,
 };
 
 inline default_arguments operator&(const default_arguments &a,
@@ -594,7 +601,7 @@ class Argument {
       -> std::ostream &;
 
   template <std::size_t N, std::size_t... I>
-  explicit Argument(std::string_view                  prefix_chars,
+  explicit Argument(std::string_view prefix_chars,
                     std::array<std::string_view, N> &&a,
                     std::index_sequence<I...> /*unused*/)
       : m_accepts_optional_like_value(false),
@@ -610,7 +617,7 @@ class Argument {
 
 public:
   template <std::size_t N>
-  explicit Argument(std::string_view                  prefix_chars,
+  explicit Argument(std::string_view prefix_chars,
                     std::array<std::string_view, N> &&a)
       : Argument(prefix_chars, std::move(a), std::make_index_sequence<N>{}) {}
 
@@ -625,7 +632,7 @@ public:
   }
 
   template <typename T> Argument &default_value(T &&value) {
-    m_num_args_range     = NArgsRange{0, m_num_args_range.get_max()};
+    m_num_args_range = NArgsRange{0, m_num_args_range.get_max()};
     m_default_value_repr = details::repr(value);
 
     if constexpr (std::is_convertible_v<T, std::string_view>) {
@@ -664,7 +671,7 @@ public:
   }
 
   template <class F, class... Args>
-  auto action(F &&callable, Args &&...bound_args)
+  auto action(F &&callable, Args &&... bound_args)
       -> std::enable_if_t<std::is_invocable_v<F, Args..., std::string const>,
                           Argument &> {
     using action_type = std::conditional_t<
@@ -674,7 +681,7 @@ public:
       m_action.emplace<action_type>(std::forward<F>(callable));
     } else {
       m_action.emplace<action_type>(
-          [f   = std::forward<F>(callable),
+          [f = std::forward<F>(callable),
            tup = std::make_tuple(std::forward<Args>(bound_args)...)](
               std::string const &opt) mutable {
             return details::apply_plus_one(f, tup, opt);
@@ -694,8 +701,7 @@ public:
     return *this;
   }
 
-  template <typename T, typename std::enable_if<
-                            std::is_integral<T>::value>::type * = nullptr>
+  template <typename T, typename std::enable_if<std::is_integral<T>::value>::type * = nullptr>
   auto &store_into(T &var) {
     if (m_default_value.has_value()) {
       var = std::any_cast<T>(m_default_value);
@@ -729,7 +735,9 @@ public:
       var = std::any_cast<std::vector<std::string>>(m_default_value);
     }
     action([this, &var](const std::string &s) {
-      if (!m_is_used) { var.clear(); }
+      if (!m_is_used) {
+        var.clear();
+      }
       m_is_used = true;
       var.push_back(s);
     });
@@ -741,7 +749,9 @@ public:
       var = std::any_cast<std::vector<int>>(m_default_value);
     }
     action([this, &var](const std::string &s) {
-      if (!m_is_used) { var.clear(); }
+      if (!m_is_used) {
+        var.clear();
+      }
       m_is_used = true;
       var.push_back(details::parse_number<int, details::radix_10>()(s));
     });
@@ -753,7 +763,9 @@ public:
       var = std::any_cast<std::set<std::string>>(m_default_value);
     }
     action([this, &var](const std::string &s) {
-      if (!m_is_used) { var.clear(); }
+      if (!m_is_used) {
+        var.clear();
+      }
       m_is_used = true;
       var.insert(s);
     });
@@ -765,7 +777,9 @@ public:
       var = std::any_cast<std::set<int>>(m_default_value);
     }
     action([this, &var](const std::string &s) {
-      if (!m_is_used) { var.clear(); }
+      if (!m_is_used) {
+        var.clear();
+      }
       m_is_used = true;
       var.insert(details::parse_number<int, details::radix_10>()(s));
     });
@@ -839,7 +853,9 @@ public:
 
   Argument &nargs(nargs_pattern pattern) {
     switch (pattern) {
-    case nargs_pattern::optional: m_num_args_range = NArgsRange{0, 1}; break;
+    case nargs_pattern::optional:
+      m_num_args_range = NArgsRange{0, 1};
+      break;
     case nargs_pattern::any:
       m_num_args_range =
           NArgsRange{0, (std::numeric_limits<std::size_t>::max)()};
@@ -863,7 +879,9 @@ public:
     static_assert(std::is_convertible_v<T, std::string_view> ||
                       details::can_invoke_to_string<T>::value,
                   "Choice is not convertible to string_type");
-    if (!m_choices.has_value()) { m_choices = std::vector<std::string>{}; }
+    if (!m_choices.has_value()) {
+      m_choices = std::vector<std::string>{};
+    }
 
     if constexpr (std::is_convertible_v<T, std::string_view>) {
       m_choices.value().push_back(
@@ -881,7 +899,7 @@ public:
   }
 
   template <typename T, typename... U>
-  Argument &choices(T &&first, U &&...rest) {
+  Argument &choices(T &&first, U &&... rest) {
     add_choice(std::forward<T>(first));
     choices(std::forward<U>(rest)...);
     return *this;
@@ -921,7 +939,7 @@ public:
 
   template <typename Iterator>
   void throw_invalid_arguments_error(Iterator option_it) const {
-    const auto       &choices        = m_choices.value();
+    const auto &choices = m_choices.value();
     const std::string choices_as_csv = std::accumulate(
         choices.begin(), choices.end(), std::string(),
         [](const std::string &option_a, const std::string &option_b) {
@@ -970,8 +988,8 @@ public:
 
     const auto num_args_max =
         (m_choices.has_value()) ? passed_options : m_num_args_range.get_max();
-    const auto  num_args_min = m_num_args_range.get_min();
-    std::size_t dist         = 0;
+    const auto num_args_min = m_num_args_range.get_min();
+    std::size_t dist = 0;
     if (num_args_max == 0) {
       if (!dry_run) {
         m_values.emplace_back(m_implicit_value);
@@ -1011,7 +1029,7 @@ public:
           }
         }
 
-        Iterator  first, last;
+        Iterator first, last;
         Argument &self;
       };
       if (!dry_run) {
@@ -1021,7 +1039,9 @@ public:
       return end;
     }
     if (m_default_value.has_value()) {
-      if (!dry_run) { m_is_used = true; }
+      if (!dry_run) {
+        m_is_used = true;
+      }
       return start;
     }
     throw std::runtime_error("Too few arguments for '" +
@@ -1069,7 +1089,9 @@ public:
     const std::string metavar = !m_metavar.empty() ? m_metavar : "VAR";
     if (m_num_args_range.get_max() > 0) {
       usage << " " << metavar;
-      if (m_num_args_range.get_max() > 1) { usage << "..."; }
+      if (m_num_args_range.get_max() > 1) {
+        usage << "...";
+      }
     }
     return usage.str();
   }
@@ -1079,9 +1101,13 @@ public:
     // Find the longest variant to show in the usage string
     std::string longest_name = m_names.front();
     for (const auto &s : m_names) {
-      if (s.size() > longest_name.size()) { longest_name = s; }
+      if (s.size() > longest_name.size()) {
+        longest_name = s;
+      }
     }
-    if (!m_is_required) { usage << "["; }
+    if (!m_is_required) {
+      usage << "[";
+    }
     usage << longest_name;
     const std::string metavar = !m_metavar.empty() ? m_metavar : "VAR";
     if (m_num_args_range.get_max() > 0) {
@@ -1091,8 +1117,12 @@ public:
         usage << "...";
       }
     }
-    if (!m_is_required) { usage << "]"; }
-    if (m_is_repeatable) { usage << "..."; }
+    if (!m_is_required) {
+      usage << "]";
+    }
+    if (m_is_repeatable) {
+      usage << "...";
+    }
     return usage.str();
   }
 
@@ -1121,7 +1151,7 @@ public:
     return size + 2; // indent
   }
 
-  friend std::ostream &operator<<(std::ostream   &stream,
+  friend std::ostream &operator<<(std::ostream &stream,
                                   const Argument &argument) {
     std::stringstream name_stream;
     name_stream << "  "; // indent
@@ -1140,10 +1170,10 @@ public:
       if (!argument.m_metavar.empty() &&
           argument.m_num_args_range == NArgsRange{1, 1}) {
         name_stream << " " << argument.m_metavar;
-      } else if (!argument.m_metavar.empty() &&
-                 argument.m_num_args_range.get_min() ==
-                     argument.m_num_args_range.get_max() &&
-                 argument.m_metavar.find("> <") != std::string::npos) {
+      }
+      else if (!argument.m_metavar.empty() &&
+               argument.m_num_args_range.get_min() == argument.m_num_args_range.get_max() &&
+               argument.m_metavar.find("> <") != std::string::npos) {
         name_stream << " " << argument.m_metavar;
       }
     }
@@ -1151,10 +1181,10 @@ public:
     // align multiline help message
     auto stream_width = stream.width();
     auto name_padding = std::string(name_stream.str().size(), ' ');
-    auto pos          = std::string::size_type{};
-    auto prev         = std::string::size_type{};
-    auto first_line   = true;
-    auto hspace       = "  "; // minimal space between name and help message
+    auto pos = std::string::size_type{};
+    auto prev = std::string::size_type{};
+    auto first_line = true;
+    auto hspace = "  "; // minimal space between name and help message
     stream << name_stream.str();
     std::string_view help_view(argument.m_help);
     while ((pos = argument.m_help.find('\n', prev)) != std::string::npos) {
@@ -1179,7 +1209,9 @@ public:
     }
 
     // print nargs spec
-    if (!argument.m_help.empty()) { stream << " "; }
+    if (!argument.m_help.empty()) {
+      stream << " ";
+    }
     stream << argument.m_num_args_range;
 
     bool add_space = false;
@@ -1192,7 +1224,9 @@ public:
       add_space = true;
     }
     if (argument.m_is_repeatable) {
-      if (add_space) { stream << " "; }
+      if (add_space) {
+        stream << " ";
+      }
       stream << "[may be repeated]";
     }
     stream << "\n";
@@ -1212,7 +1246,7 @@ public:
       return get<T>() == rhs;
     } else {
       using ValueType = typename T::value_type;
-      auto lhs        = get<T>();
+      auto lhs = get<T>();
       return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs),
                         std::end(rhs), [](const auto &a, const auto &b) {
                           return std::any_cast<const ValueType &>(a) == b;
@@ -1231,10 +1265,15 @@ public:
                             std::string_view prefix_chars) {
     auto first = lookahead(name);
 
-    if (first == eof) { return true; }
-    if (prefix_chars.find(static_cast<char>(first)) != std::string_view::npos) {
+    if (first == eof) {
+      return true;
+    }
+    if (prefix_chars.find(static_cast<char>(first)) !=
+                          std::string_view::npos) {
       name.remove_prefix(1);
-      if (name.empty()) { return true; }
+      if (name.empty()) {
+        return true;
+      }
       return is_decimal_literal(name);
     }
     return true;
@@ -1325,7 +1364,9 @@ private:
   static constexpr int eof = std::char_traits<char>::eof();
 
   static auto lookahead(std::string_view s) -> int {
-    if (s.empty()) { return eof; }
+    if (s.empty()) {
+      return eof;
+    }
     return static_cast<int>(static_cast<unsigned char>(s[0]));
   }
 
@@ -1369,8 +1410,10 @@ private:
       case '6':
       case '7':
       case '8':
-      case '9': return true;
-      default: return false;
+      case '9':
+        return true;
+      default:
+        return false;
       }
     };
 
@@ -1384,7 +1427,9 @@ private:
     switch (lookahead(s)) {
     case '0': {
       s.remove_prefix(1);
-      if (s.empty()) { return true; }
+      if (s.empty()) {
+        return true;
+      }
       goto integer_part;
     }
     case '1':
@@ -1397,14 +1442,17 @@ private:
     case '8':
     case '9': {
       s = consume_digits(s);
-      if (s.empty()) { return true; }
+      if (s.empty()) {
+        return true;
+      }
       goto integer_part_consumed;
     }
     case '.': {
       s.remove_prefix(1);
       goto post_decimal_point;
     }
-    default: return false;
+    default:
+      return false;
     }
 
   integer_part:
@@ -1424,7 +1472,8 @@ private:
       s.remove_prefix(1);
       goto post_e;
     }
-    default: return false;
+    default:
+      return false;
     }
 
   post_decimal_point:
@@ -1436,19 +1485,22 @@ private:
 
   exponent_part_opt:
     switch (lookahead(s)) {
-    case eof: return true;
+    case eof:
+      return true;
     case 'e':
     case 'E': {
       s.remove_prefix(1);
       goto post_e;
     }
-    default: return false;
+    default:
+      return false;
     }
 
   post_e:
     switch (lookahead(s)) {
     case '-':
-    case '+': s.remove_prefix(1);
+    case '+':
+      s.remove_prefix(1);
     }
     if (is_digit(lookahead(s))) {
       s = consume_digits(s);
@@ -1495,7 +1547,9 @@ private:
     if (m_default_value.has_value()) {
       throw std::logic_error("Argument with default value always presents");
     }
-    if (m_values.empty()) { return std::nullopt; }
+    if (m_values.empty()) {
+      return std::nullopt;
+    }
     if constexpr (details::IsContainer<T>) {
       return any_cast_container<T>(m_values);
     }
@@ -1518,41 +1572,41 @@ private:
   void set_group_idx(std::size_t i) { m_group_idx = i; }
 
   std::vector<std::string> m_names;
-  std::string_view         m_used_name;
-  std::string              m_help;
-  std::string              m_metavar;
-  std::any                 m_default_value;
-  std::string              m_default_value_repr;
+  std::string_view m_used_name;
+  std::string m_help;
+  std::string m_metavar;
+  std::any m_default_value;
+  std::string m_default_value_repr;
   std::optional<std::string>
       m_default_value_str; // used for checking default_value against choices
-  std::any                                m_implicit_value;
+  std::any m_implicit_value;
   std::optional<std::vector<std::string>> m_choices{std::nullopt};
   using valued_action = std::function<std::any(const std::string &)>;
-  using void_action   = std::function<void(const std::string &)>;
+  using void_action = std::function<void(const std::string &)>;
   std::variant<valued_action, void_action> m_action{
       std::in_place_type<valued_action>,
       [](const std::string &value) { return value; }};
   std::vector<std::any> m_values;
-  NArgsRange            m_num_args_range{1, 1};
+  NArgsRange m_num_args_range{1, 1};
   // Bit field of bool values. Set default value in ctor.
-  bool             m_accepts_optional_like_value : 1;
-  bool             m_is_optional : 1;
-  bool             m_is_required : 1;
-  bool             m_is_repeatable : 1;
-  bool             m_is_used : 1;
-  bool             m_is_hidden : 1; // if set, does not appear in usage or help
-  std::string_view m_prefix_chars;  // ArgumentParser has the prefix_chars
-  int              m_usage_newline_counter = 0;
-  std::size_t      m_group_idx             = 0;
+  bool m_accepts_optional_like_value : 1;
+  bool m_is_optional : 1;
+  bool m_is_required : 1;
+  bool m_is_repeatable : 1;
+  bool m_is_used : 1;
+  bool m_is_hidden : 1;            // if set, does not appear in usage or help
+  std::string_view m_prefix_chars; // ArgumentParser has the prefix_chars
+  int m_usage_newline_counter = 0;
+  std::size_t m_group_idx = 0;
 };
 
 class ArgumentParser {
 public:
-  explicit ArgumentParser(std::string       program_name = {},
-                          std::string       version      = "1.0",
+  explicit ArgumentParser(std::string program_name = {},
+                          std::string version = "1.0",
                           default_arguments add_args = default_arguments::all,
-                          bool              exit_on_default_arguments = true,
-                          std::ostream     &os = std::cout)
+                          bool exit_on_default_arguments = true,
+                          std::ostream &os = std::cout)
       : m_program_name(std::move(program_name)), m_version(std::move(version)),
         m_exit_on_default_arguments(exit_on_default_arguments),
         m_parser_path(m_program_name) {
@@ -1560,7 +1614,9 @@ public:
       add_argument("-h", "--help")
           .action([&](const auto & /*unused*/) {
             os << help().str();
-            if (m_exit_on_default_arguments) { std::exit(0); }
+            if (m_exit_on_default_arguments) {
+              std::exit(0);
+            }
           })
           .default_value(false)
           .help("shows help message and exits")
@@ -1571,7 +1627,9 @@ public:
       add_argument("-v", "--version")
           .action([&](const auto & /*unused*/) {
             os << m_version << std::endl;
-            if (m_exit_on_default_arguments) { std::exit(0); }
+            if (m_exit_on_default_arguments) {
+              std::exit(0);
+            }
           })
           .default_value(false)
           .help("prints version information and exits")
@@ -1588,10 +1646,10 @@ public:
   // ArgumentParser internally uses std::string_views,
   // references, iterators, etc.
   // Many of these elements become invalidated after a copy or move.
-  ArgumentParser(const ArgumentParser &other)            = delete;
+  ArgumentParser(const ArgumentParser &other) = delete;
   ArgumentParser &operator=(const ArgumentParser &other) = delete;
-  ArgumentParser(ArgumentParser &&) noexcept             = delete;
-  ArgumentParser &operator=(ArgumentParser &&)           = delete;
+  ArgumentParser(ArgumentParser &&) noexcept = delete;
+  ArgumentParser &operator=(ArgumentParser &&) = delete;
 
   explicit operator bool() const {
     auto arg_used = std::any_of(m_argument_map.cbegin(), m_argument_map.cend(),
@@ -1629,7 +1687,7 @@ public:
     MutuallyExclusiveGroup() = delete;
 
     explicit MutuallyExclusiveGroup(ArgumentParser &parent,
-                                    bool            required = false)
+                                    bool required = false)
         : m_parent(parent), m_required(required), m_elements({}) {}
 
     MutuallyExclusiveGroup(const MutuallyExclusiveGroup &other) = delete;
@@ -1651,8 +1709,8 @@ public:
     }
 
   private:
-    ArgumentParser         &m_parent;
-    bool                    m_required{false};
+    ArgumentParser &m_parent;
+    bool m_required{false};
     std::vector<Argument *> m_elements{};
   };
 
@@ -1664,7 +1722,7 @@ public:
   // Parameter packed add_parents method
   // Accepts a variadic number of ArgumentParser objects
   template <typename... Targs>
-  ArgumentParser &add_parents(const Targs &...f_args) {
+  ArgumentParser &add_parents(const Targs &... f_args) {
     for (const ArgumentParser &parent_parser : {std::ref(f_args)...}) {
       for (const auto &argument : parent_parser.m_positional_arguments) {
         auto it = m_positional_arguments.insert(
@@ -1730,7 +1788,7 @@ public:
       return (*this)[name];
     } else {
       std::string str_name(name);
-      auto        subparser_it = m_subparser_map.find(str_name);
+      auto subparser_it = m_subparser_map.find(str_name);
       if (subparser_it != m_subparser_map.end()) {
         return subparser_it->second->get();
       }
@@ -1763,12 +1821,12 @@ public:
     // Check each mutually exclusive group and make sure
     // there are no constraint violations
     for (const auto &group : m_mutually_exclusive_groups) {
-      auto      mutex_argument_used{false};
+      auto mutex_argument_used{false};
       Argument *mutex_argument_it{nullptr};
       for (Argument *arg : group.m_elements) {
         if (!mutex_argument_used && arg->m_is_used) {
           mutex_argument_used = true;
-          mutex_argument_it   = arg;
+          mutex_argument_it = arg;
         } else if (mutex_argument_used && arg->m_is_used) {
           // Violation
           throw std::runtime_error("Argument '" + arg->get_usage_full() +
@@ -1781,16 +1839,14 @@ public:
         // at least one argument from the group is
         // required
         std::string argument_names{};
-        std::size_t i    = 0;
+        std::size_t i = 0;
         std::size_t size = group.m_elements.size();
         for (Argument *arg : group.m_elements) {
           if (i + 1 == size) {
             // last
-            argument_names +=
-                std::string("'") + arg->get_usage_full() + std::string("' ");
+            argument_names += std::string("'") + arg->get_usage_full() + std::string("' ");
           } else {
-            argument_names +=
-                std::string("'") + arg->get_usage_full() + std::string("' or ");
+            argument_names += std::string("'") + arg->get_usage_full() + std::string("' or ");
           }
           i += 1;
         }
@@ -1881,20 +1937,26 @@ public:
    */
   Argument &operator[](std::string_view arg_name) const {
     std::string name(arg_name);
-    auto        it = m_argument_map.find(name);
-    if (it != m_argument_map.end()) { return *(it->second); }
+    auto it = m_argument_map.find(name);
+    if (it != m_argument_map.end()) {
+      return *(it->second);
+    }
     if (!is_valid_prefix_char(arg_name.front())) {
       const auto legal_prefix_char = get_any_valid_prefix_char();
-      const auto prefix            = std::string(1, legal_prefix_char);
+      const auto prefix = std::string(1, legal_prefix_char);
 
       // "-" + arg_name
       name = prefix + name;
-      it   = m_argument_map.find(name);
-      if (it != m_argument_map.end()) { return *(it->second); }
+      it = m_argument_map.find(name);
+      if (it != m_argument_map.end()) {
+        return *(it->second);
+      }
       // "--" + arg_name
       name = prefix + name;
-      it   = m_argument_map.find(name);
-      if (it != m_argument_map.end()) { return *(it->second); }
+      it = m_argument_map.find(name);
+      if (it != m_argument_map.end()) {
+        return *(it->second);
+      }
     }
     throw std::logic_error("No such argument: " + std::string(arg_name));
   }
@@ -1912,13 +1974,15 @@ public:
       stream << parser.m_description << "\n\n";
     }
 
-    const bool has_visible_positional_args =
-        std::find_if(parser.m_positional_arguments.begin(),
-                     parser.m_positional_arguments.end(),
-                     [](const auto &argument) {
-                       return !argument.m_is_hidden;
-                     }) != parser.m_positional_arguments.end();
-    if (has_visible_positional_args) { stream << "Positional arguments:\n"; }
+    const bool has_visible_positional_args = std::find_if(
+      parser.m_positional_arguments.begin(),
+      parser.m_positional_arguments.end(),
+      [](const auto &argument) {
+      return !argument.m_is_hidden; }) !=
+      parser.m_positional_arguments.end();
+    if (has_visible_positional_args) {
+      stream << "Positional arguments:\n";
+    }
 
     for (const auto &argument : parser.m_positional_arguments) {
       if (!argument.m_is_hidden) {
@@ -1959,7 +2023,9 @@ public:
                      : "\n")
              << "Subcommands:\n";
       for (const auto &[command, subparser] : parser.m_subparser_map) {
-        if (subparser->get().m_suppress) { continue; }
+        if (subparser->get().m_suppress) {
+          continue;
+        }
 
         stream << std::setw(2) << " ";
         stream << std::setw(static_cast<int>(longest_arg_length - 2))
@@ -2002,19 +2068,23 @@ public:
 
     std::string curline("Usage: ");
     curline += this->m_program_name;
-    const bool multiline_usage = this->m_usage_max_line_width <
-                                 (std::numeric_limits<std::size_t>::max)();
+    const bool multiline_usage =
+        this->m_usage_max_line_width < (std::numeric_limits<std::size_t>::max)();
     const size_t indent_size = curline.size();
 
     const auto deal_with_options_of_group = [&](std::size_t group_idx) {
       bool found_options = false;
       // Add any options inline here
-      const MutuallyExclusiveGroup *cur_mutex             = nullptr;
-      int                           usage_newline_counter = -1;
+      const MutuallyExclusiveGroup *cur_mutex = nullptr;
+      int usage_newline_counter = -1;
       for (const auto &argument : this->m_optional_arguments) {
-        if (argument.m_is_hidden) { continue; }
+        if (argument.m_is_hidden) {
+          continue;
+        }
         if (multiline_usage) {
-          if (argument.m_group_idx != group_idx) { continue; }
+          if (argument.m_group_idx != group_idx) {
+            continue;
+          }
           if (usage_newline_counter != argument.m_usage_newline_counter) {
             if (usage_newline_counter >= 0) {
               if (curline.size() > indent_size) {
@@ -2025,7 +2095,7 @@ public:
             usage_newline_counter = argument.m_usage_newline_counter;
           }
         }
-        found_options                      = true;
+        found_options = true;
         const std::string arg_inline_usage = argument.get_inline_usage();
         const MutuallyExclusiveGroup *arg_mutex =
             get_belonging_mutex(&argument);
@@ -2068,7 +2138,9 @@ public:
         }
         curline += arg_inline_usage;
       }
-      if (cur_mutex != nullptr) { curline += ']'; }
+      if (cur_mutex != nullptr) {
+        curline += ']';
+      }
       return found_options;
     };
 
@@ -2081,7 +2153,9 @@ public:
     }
     // Put positional arguments after the optionals
     for (const auto &argument : this->m_positional_arguments) {
-      if (argument.m_is_hidden) { continue; }
+      if (argument.m_is_hidden) {
+        continue;
+      }
       const std::string pos_arg = !argument.m_metavar.empty()
                                       ? argument.m_metavar
                                       : argument.m_names.front();
@@ -2121,7 +2195,9 @@ public:
       stream << " {";
       std::size_t i{0};
       for (const auto &[command, subparser] : m_subparser_map) {
-        if (subparser->get().m_suppress) { continue; }
+        if (subparser->get().m_suppress) {
+          continue;
+        }
 
         if (i == 0) {
           stream << command;
@@ -2180,7 +2256,7 @@ protected:
   preprocess_arguments(const std::vector<std::string> &raw_arguments) const {
     std::vector<std::string> arguments{};
     for (const auto &arg : raw_arguments) {
-
+      
       const auto argument_starts_with_prefix_chars =
           [this](const std::string &a) -> bool {
         if (!a.empty()) {
@@ -2196,7 +2272,9 @@ protected:
           const auto windows_style = legal_prefix('/');
 
           if (windows_style) {
-            if (legal_prefix(a[0])) { return true; }
+            if (legal_prefix(a[0])) {
+              return true;
+            }
           } else {
             // Slash '/' is not a legal prefix char
             // For all other characters, only support long arguments
@@ -2242,7 +2320,7 @@ protected:
     if (m_program_name.empty() && !arguments.empty()) {
       m_program_name = arguments.front();
     }
-    auto end                    = std::end(arguments);
+    auto end = std::end(arguments);
     auto positional_argument_it = std::begin(m_positional_arguments);
     for (auto it = std::next(std::begin(arguments)); it != end;) {
       const auto &current_argument = *it;
@@ -2258,7 +2336,7 @@ protected:
                 std::vector<std::string>(it, end);
 
             // invoke subparser
-            m_is_parsed                        = true;
+            m_is_parsed = true;
             m_subparser_used[current_argument] = true;
             return subparser_it->second->get().parse_args(
                 unprocessed_arguments);
@@ -2304,19 +2382,16 @@ protected:
 
         // Deal with the situation of <positional_arg1>... <positional_arg2>
         if (argument->m_num_args_range.get_min() == 1 &&
-            argument->m_num_args_range.get_max() ==
-                (std::numeric_limits<std::size_t>::max)() &&
+            argument->m_num_args_range.get_max() == (std::numeric_limits<std::size_t>::max)() &&
             positional_argument_it != std::end(m_positional_arguments) &&
-            std::next(positional_argument_it) ==
-                std::end(m_positional_arguments) &&
+            std::next(positional_argument_it) == std::end(m_positional_arguments) &&
             positional_argument_it->m_num_args_range.get_min() == 1 &&
-            positional_argument_it->m_num_args_range.get_max() == 1) {
+            positional_argument_it->m_num_args_range.get_max() == 1 ) {
           if (std::next(it) != end) {
             positional_argument_it->consume(std::prev(end), end);
             end = std::prev(end);
           } else {
-            throw std::runtime_error("Missing " +
-                                     positional_argument_it->m_names.front());
+            throw std::runtime_error("Missing " + positional_argument_it->m_names.front());
           }
         }
 
@@ -2335,10 +2410,10 @@ protected:
         ++it;
         for (std::size_t j = 1; j < compound_arg.size(); j++) {
           auto hypothetical_arg = std::string{'-', compound_arg[j]};
-          auto arg_map_it2      = m_argument_map.find(hypothetical_arg);
+          auto arg_map_it2 = m_argument_map.find(hypothetical_arg);
           if (arg_map_it2 != m_argument_map.end()) {
             auto argument = arg_map_it2->second;
-            it            = argument->consume(it, end, arg_map_it2->first);
+            it = argument->consume(it, end, arg_map_it2->first);
           } else {
             throw std::runtime_error("Unknown argument: " + current_argument);
           }
@@ -2362,7 +2437,7 @@ protected:
     if (m_program_name.empty() && !arguments.empty()) {
       m_program_name = arguments.front();
     }
-    auto end                    = std::end(arguments);
+    auto end = std::end(arguments);
     auto positional_argument_it = std::begin(m_positional_arguments);
     for (auto it = std::next(std::begin(arguments)); it != end;) {
       const auto &current_argument = *it;
@@ -2378,7 +2453,7 @@ protected:
                 std::vector<std::string>(it, end);
 
             // invoke subparser
-            m_is_parsed                        = true;
+            m_is_parsed = true;
             m_subparser_used[current_argument] = true;
             return subparser_it->second->get().parse_known_args_internal(
                 unprocessed_arguments);
@@ -2391,7 +2466,7 @@ protected:
           // current argument is the value of a positional argument
           // consume it
           auto argument = positional_argument_it++;
-          it            = argument->consume(it, end);
+          it = argument->consume(it, end);
         }
         continue;
       }
@@ -2407,10 +2482,10 @@ protected:
         ++it;
         for (std::size_t j = 1; j < compound_arg.size(); j++) {
           auto hypothetical_arg = std::string{'-', compound_arg[j]};
-          auto arg_map_it2      = m_argument_map.find(hypothetical_arg);
+          auto arg_map_it2 = m_argument_map.find(hypothetical_arg);
           if (arg_map_it2 != m_argument_map.end()) {
             auto argument = arg_map_it2->second;
-            it            = argument->consume(it, end, arg_map_it2->first);
+            it = argument->consume(it, end, arg_map_it2->first);
           } else {
             unknown_arguments.push_back(current_argument);
             break;
@@ -2429,7 +2504,9 @@ protected:
 
   // Used by print_help.
   std::size_t get_length_of_longest_argument() const {
-    if (m_argument_map.empty()) { return 0; }
+    if (m_argument_map.empty()) {
+      return 0;
+    }
     std::size_t max_size = 0;
     for ([[maybe_unused]] const auto &[unused, argument] : m_argument_map) {
       max_size =
@@ -2441,7 +2518,7 @@ protected:
     return max_size;
   }
 
-  using argument_it    = std::list<Argument>::iterator;
+  using argument_it = std::list<Argument>::iterator;
   using mutex_group_it = std::vector<MutuallyExclusiveGroup>::iterator;
   using argument_parser_it =
       std::list<std::reference_wrapper<ArgumentParser>>::iterator;
@@ -2452,27 +2529,26 @@ protected:
     }
   }
 
-  std::string                        m_program_name;
-  std::string                        m_version;
-  std::string                        m_description;
-  std::string                        m_epilog;
-  bool                               m_exit_on_default_arguments = true;
-  std::string                        m_prefix_chars{"-"};
-  std::string                        m_assign_chars{"="};
-  bool                               m_is_parsed = false;
-  std::list<Argument>                m_positional_arguments;
-  std::list<Argument>                m_optional_arguments;
+  std::string m_program_name;
+  std::string m_version;
+  std::string m_description;
+  std::string m_epilog;
+  bool m_exit_on_default_arguments = true;
+  std::string m_prefix_chars{"-"};
+  std::string m_assign_chars{"="};
+  bool m_is_parsed = false;
+  std::list<Argument> m_positional_arguments;
+  std::list<Argument> m_optional_arguments;
   std::map<std::string, argument_it> m_argument_map;
-  std::string                        m_parser_path;
+  std::string m_parser_path;
   std::list<std::reference_wrapper<ArgumentParser>> m_subparsers;
-  std::map<std::string, argument_parser_it>         m_subparser_map;
-  std::map<std::string, bool>                       m_subparser_used;
-  std::vector<MutuallyExclusiveGroup>               m_mutually_exclusive_groups;
-  bool                                              m_suppress = false;
-  std::size_t                                       m_usage_max_line_width =
-      (std::numeric_limits<std::size_t>::max)();
-  bool                     m_usage_break_on_mutex  = false;
-  int                      m_usage_newline_counter = 0;
+  std::map<std::string, argument_parser_it> m_subparser_map;
+  std::map<std::string, bool> m_subparser_used;
+  std::vector<MutuallyExclusiveGroup> m_mutually_exclusive_groups;
+  bool m_suppress = false;
+  std::size_t m_usage_max_line_width = (std::numeric_limits<std::size_t>::max)();
+  bool m_usage_break_on_mutex = false;
+  int m_usage_newline_counter = 0;
   std::vector<std::string> m_group_names;
 };
 
