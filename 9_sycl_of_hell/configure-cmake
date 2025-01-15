@@ -4,6 +4,7 @@ function print_help() {
   echo "Usage: $0 [options]"
   echo "Options:"
   echo "  -help Print this help message and exit."
+  echo "  -cxx <compiler> Set the compiler to be used for the build."
   echo "  -cxxflags <compiler flags> Set compiler flags to use for the build."
   echo "  -build-type <Release|RelWithDebInfo|Debug> Build type."
   echo "  -build-dir <build directory> Build directory."
@@ -15,6 +16,7 @@ SYCL_TRAIN_SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SYCL_TRAIN_STATE_PATH="${SYCL_TRAIN_SOURCE_DIR}/.9_sycl_of_hell_state"
 
 # Set default values.
+: ${SYCL_TRAIN_CXX:="icpx"}
 : ${SYCL_TRAIN_CXX_FLAGS:="-O2"}
 : ${SYCL_TRAIN_BUILD_TYPE:=RelWithDebInfo}
 : ${SYCL_TRAIN_BUILD_DIR:=`pwd`/build}
@@ -27,6 +29,11 @@ while [[ $# -gt 0 ]]; do
     -help)
       print_help
       exit 0
+      ;;
+    -cxx)
+      SYCL_TRAIN_CXX="$2"
+      shift
+      shift
       ;;
     -cxxflags)
       SYCL_TRAIN_CXX_FLAGS="$2"
@@ -63,6 +70,7 @@ done
 mkdir -p ${SYCL_TRAIN_BUILD_DIR} 2> /dev/null
 
 cmake -B ${SYCL_TRAIN_BUILD_DIR} -S . \
+  -DCMAKE_CXX_COMPILER=${SYCL_TRAIN_CXX} \
   -DCMAKE_CXX_FLAGS="${SYCL_TRAIN_CXX_FLAGS}" \
   -DCMAKE_BUILD_TYPE=${SYCL_TRAIN_BUILD_TYPE} \
   -DCMAKE_INSTALL_PREFIX=${SYCL_TRAIN_INSTALL_PREFIX} \

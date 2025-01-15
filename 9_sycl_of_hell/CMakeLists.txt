@@ -3,6 +3,9 @@ project(9_sycl_of_hell LANGUAGES CXX)
 
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
+# Set CMake module path.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
 # Use, i.e. don't skip the full RPATH for the build tree.
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
@@ -14,8 +17,7 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 # outside the build tree to the install RPATH.
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-# Write now we use IntelSYCL for the examples.
-find_package(IntelSYCL REQUIRED)
+include(FindSYCLTargets)
 
 # Turn on AddressSanitizer if ENABLE_ASAN is set.
 if (ENABLE_ASAN)
@@ -30,7 +32,7 @@ file(GLOB files "*.cpp")
 foreach(file_name ${files})
   get_filename_component(example_name ${file_name} NAME_WE)
   add_executable(${example_name} ${file_name})
-  target_include_directories(${example_name} PRIVATE 3rd_party)
+  target_include_directories(${example_name} PRIVATE ../3rd_party)
   add_sycl_to_target(TARGET ${example_name} SOURCES ${file_name})
 
   if (HAS_ADDRESS_SANITIZER)
