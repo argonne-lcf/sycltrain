@@ -54,7 +54,7 @@ endif()
 function(add_sycl_to_target)
   set(options)
   set(one_value_keywords TARGET)
-	# We don't use SOURCE but provide the following for compatibility.
+  # We don't use SOURCE but provide the following for compatibility.
   set(multi_value_keywords SOURCES)
   cmake_parse_arguments(ADD_SYCL
     "${options}"
