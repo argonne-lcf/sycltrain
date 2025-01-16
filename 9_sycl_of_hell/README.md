@@ -13,14 +13,29 @@ module use /soft/modulefiles
 module load oneapi/upstream
 CXX=clang++ CXXFLAGS="-fsycl -fsycl-targets=nvptx64-nvidia-cuda -Xsycl-target-backend --cuda-gpu-arch=sm_80" make -j
 ```
+Running the above commands will generate the examples in the current
+working directory (`${PWD}`).
 
-## Fancy "new" Cmake (only for Aurora -- I have poor cmake skill)
+## Fancy "new" CMake
 
 ```
+# Aurora
 module load cmake
 ./configure-cmake
 ./9_sycl_of_hell -install
+
+# Polaris
+module use /soft/modulefiles
+module load oneapi/upstream
+module load spack-pe-base cmake
+./configure-cmake -cxx clang++
+./9_sycl_of_hell -install
 ```
+
+Running the above commands will generate the examples in
+`${PWD}/install/bin` where `${PWD}` is the current working directory.
+Use `-help` option to list all the configuration and run options supported
+by `configure-cmake` and `9_sycl_of_hell` scripts.
 
 # List of programs
 
