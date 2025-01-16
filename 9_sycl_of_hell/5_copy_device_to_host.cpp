@@ -1,8 +1,8 @@
-#include "argparse.hpp"
 #include <sycl/sycl.hpp>
 
-int main(int argc, char **argv) {
+#include "argparse.hpp"
 
+int main(int argc, char **argv) {
   //  _                ___
   // |_) _. ._ _  _     |  ._  ._     _|_
   // |  (_| | _> (/_   _|_ | | |_) |_| |_
@@ -29,7 +29,8 @@ int main(int argc, char **argv) {
   //   |_/ (_|  |_ (_|    | | (_| | | _>  | (/_ |
   //
   sycl::queue Q;
-  std::cout << "Running on " << Q.get_device().get_info<sycl::info::device::name>() << "\n";
+  std::cout << "Running on "
+            << Q.get_device().get_info<sycl::info::device::name>() << "\n";
 
   // Allocate Device Memory
   int *A = sycl::malloc_device<int>(global_range, Q);

@@ -1,5 +1,6 @@
 CXX ?= icpx
 CXXFLAGS ?= -fsycl
+INCFLAGS ?= -I../3rd_party
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
@@ -12,7 +13,7 @@ all: $(PRGS)
 run_all: $(sort $(RUN))
 
 %: %.cpp
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) -o $@ $^
 
 run_%:%
 	./$^
