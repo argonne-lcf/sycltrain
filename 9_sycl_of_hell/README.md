@@ -18,13 +18,15 @@ working directory (`${PWD}`).
 
 ## Fancy "new" CMake
 
+Aurora:
 ```
-# Aurora
 module load cmake
 ./configure-cmake
 ./9_sycl_of_hell -install
+```
 
-# Polaris
+Polaris:
+```
 module use /soft/modulefiles
 module load oneapi/upstream
 module load spack-pe-base cmake
@@ -45,6 +47,6 @@ by `configure-cmake` and `9_sycl_of_hell` scripts.
 - `3_nd_range` How to use `nd_range` (`./3_nd_range -g 8 -l 2`)
 - `4_memory` How to allocate memory (`./4_memory -g 8`)
 - `5_copy_device_to_host` How to data-transfer explicitly (`./5_copy_device_to_host -g 8`)
-- `6_in_order` How to deal with dependencies: In order (`./6_in_order -g 8 `) 
+- `6_in_order` How to deal with dependencies: In order (`./6_in_order -g 8 `)
 - `7_out_of_order` How to deal with dependencies: The Correct way (`./7_out_of_order -g 8`)
 - `8_reduction` How to do reduction (`./8_reduction -g 12`)
