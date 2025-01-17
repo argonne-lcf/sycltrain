@@ -1,0 +1,71 @@
+name: Build 9_sycl_of_hell examples
+
+on: 
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled'
+        required: false
+        default: true
+
+jobs:
+  run:
+    strategy:
+      matrix:
+        include:
+          - name: "[Ubuntu] Intel/LLVM"
+            os: ubuntu-latest
+            use_cmake: false
+          - name: "[Ubuntu] CMake + Intel/LLVM"
+            os: ubuntu-latest
+            use_cmake: true
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3.13
+      if: ${{ inputs.debug_enabled }}
+
+    - name: add oneAPI to apt
+      if: ${{ matrix.useoneAPI }}
+      shell: bash
+      run: |
+        cd /tmp
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+      
+    - name: install Intel oneAPI dpcpp compiler
+      if: ${{ matrix.useoneAPI }}
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install intel-oneapi-compiler-dpcpp-cpp
+
+    - name: CMake configure
+      if: ${{ matrix.use_cmake }}
+      run: |
+        ./configure-cmake
+
+    - name: CMake build
+      if: ${{ matrix.use_cmake }}
+      run: |
+        ./9_sycl_of_hell -install
+
+    - name: Make build
+      if: ${{ !matrix.use_cmake }}
+      run: make -j 4
+
+    - name: Block to allow inspecting failures
+      run: sleep 1800
+      if: ${{ failure() && inputs.debug_enabled }}
