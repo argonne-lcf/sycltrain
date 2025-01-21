@@ -1,4 +1,4 @@
-name: Build 9_sycl_of_hell examples
+name: Build and run 9_sycl_of_hell examples
 
 on: 
   push:
@@ -50,6 +50,11 @@ jobs:
         sudo apt update
         sudo apt install intel-oneapi-compiler-dpcpp-cpp
 
+    - name: Set oneAPI environment variables
+      shell: bash
+      run: |
+        echo "export ONEAPI_DEVICE_SELECTOR=opencl:cpu" >> ${GITHUB_ENV}
+
     - name: CMake configure
       if: ${{ matrix.use_cmake }}
       working-directory: 9_sycl_of_hell
@@ -63,12 +68,45 @@ jobs:
       run: |
         ./9_sycl_of_hell -install
 
+    - name: Run CMake examples
+      if: ${{ matrix.use_cmake }}
+      working-directory: 9_sycl_of_hell
+      run: |
+        source /opt/intel/oneapi/setvars.sh
+
+        ./9_sycl_of_hell -run 0_tiny_sycl_info
+        ./9_sycl_of_hell -run 1_my_first_kernel
+        ./9_sycl_of_hell -run 2_parallel_for
+        ./9_sycl_of_hell -run 3_nd_range
+        ./9_sycl_of_hell -run 4_memory
+        ./9_sycl_of_hell -run 5_copy_device_to_host
+        ./9_sycl_of_hell -run 6_in_order
+        ./9_sycl_of_hell -run 7_out_of_order
+        ./9_sycl_of_hell -run 8_reduction
+
     - name: Make build
       if: ${{ !matrix.use_cmake }}
       working-directory: 9_sycl_of_hell
       run: |
         source /opt/intel/oneapi/setvars.sh
         CXX=icpx make -j 4
+
+    - name: Run Make examples
+      if: ${{ !matrix.use_cmake }}
+      working-directory: 9_sycl_of_hell
+      run: |
+        source /opt/intel/oneapi/setvars.sh
+
+        make run_0_tiny_sycl_info
+        make run_1_my_first_kernel
+        make run_2_parallel_for
+        make run_3_nd_range
+        make run_4_memory
+        make run_5_copy_device_to_host
+        make run_6_in_order
+        make run_7_out_of_order
+        make run_8_reduction
+        make run_9_sycl_of_hell
 
     - name: Block to allow inspecting failures
       run: sleep 1800

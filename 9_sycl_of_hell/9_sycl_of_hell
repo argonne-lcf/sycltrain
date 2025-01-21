@@ -5,30 +5,33 @@ function print_help() {
   echo "Options:"
   echo "  -help Print this help message and exit."
   echo "  -install Install sycl examples."
+  echo "  -run <example> Run the example."
   echo "  -format Format the source code with clang-format."
   echo "  -format-check Check if source formatting is compliant with clang-format."
   echo "  -tidy Run clang-tidy."
 }
 
+if [[ $# -eq 0 ]]; then
+  print_help
+  exit 1
+fi
+
 SYCL_TRAIN_SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SYCL_TRAIN_STATE_PATH="${SYCL_TRAIN_SOURCE_DIR}/.9_sycl_of_hell_state"
+
+# Set default values.
+: ${SYCL_TRAIN_FORMAT:=NO}
+: ${SYCL_TRAIN_FORMAT_CHECK:=NO}
+: ${SYCL_TRAIN_TIDY:=NO}
+: ${SYCL_TRAIN_INSTALL:=NO}
+: ${SYCL_TRAIN_RUN:=NO}
+: ${SYCL_TRAIN_RUN_EXAMPLE:=}
 
 # Read state variables created by `configure`.
 if [[ -f "${SYCL_TRAIN_STATE_PATH}" ]]; then
   source "${SYCL_TRAIN_STATE_PATH}"
 else
-  echo "Error: You should run ./configure before running ${0}."
-  exit 1
-fi
-
-# Set default values.
-: ${SYCL_TRAIN_INSTALL:=NO}
-: ${SYCL_TRAIN_FORMAT:=NO}
-: ${SYCL_TRAIN_FORMAT_CHECK:=NO}
-: ${SYCL_TRAIN_TIDY:=NO}
-
-if [[ $# -eq 0 ]]; then
-  print_help
+  echo "Error: You should run ./cmake-configure before running ${0}."
   exit 1
 fi
 
@@ -38,10 +41,6 @@ while [[ $# -gt 0 ]]; do
     -help)
       print_help
       exit 0
-      ;;
-    -install)
-      SYCL_TRAIN_INSTALL="YES"
-      shift
       ;;
     -format)
       SYCL_TRAIN_FORMAT="YES"
@@ -53,6 +52,16 @@ while [[ $# -gt 0 ]]; do
       ;;
     -tidy)
       SYCL_TRAIN_TIDY="YES"
+      shift
+      ;;
+    -install)
+      SYCL_TRAIN_INSTALL="YES"
+      shift
+      ;;
+    -run)
+      SYCL_TRAIN_RUN="YES"
+      SYCL_TRAIN_RUN_EXAMPLE=$2
+      shift
       shift
       ;;
     *)
@@ -77,6 +86,15 @@ fi
 
 if [[ "${SYCL_TRAIN_INSTALL}" == "YES" ]]; then
   cmake --build ${SYCL_TRAIN_BUILD_DIR} --target install --parallel 4
+fi
+
+if [[ "${SYCL_TRAIN_RUN}" == "YES" ]]; then
+  example=${SYCL_TRAIN_INSTALL_PREFIX}/bin/${SYCL_TRAIN_RUN_EXAMPLE}
+  if [ ! -f ${example} ]; then
+    echo "The example \"$SYCL_TRAIN_RUN_EXAMPLE\" is either invalid or not yet installed."
+    exit 1
+  fi
+  $example
 fi
 
 exit $?
