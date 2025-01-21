@@ -4,11 +4,13 @@
 
 ## Good Old Make
 
+Aurora:
 ```
-# Aurora
 CXX=icpx CXXFLAGS=-fsycl make -j
+```
 
-# Polaris
+Polaris:
+```
 module use /soft/modulefiles
 module load oneapi/upstream
 CXX=clang++ CXXFLAGS="-fsycl -fsycl-targets=nvptx64-nvidia-cuda -Xsycl-target-backend --cuda-gpu-arch=sm_80" make -j
