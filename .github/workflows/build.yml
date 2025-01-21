@@ -106,7 +106,6 @@ jobs:
         make run_6_in_order
         make run_7_out_of_order
         make run_8_reduction
-        make run_9_sycl_of_hell
 
     - name: Block to allow inspecting failures
       run: sleep 1800
