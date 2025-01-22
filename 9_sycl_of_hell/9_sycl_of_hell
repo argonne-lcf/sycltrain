@@ -25,6 +25,7 @@ SYCL_TRAIN_STATE_PATH="${SYCL_TRAIN_SOURCE_DIR}/.9_sycl_of_hell_state"
 : ${SYCL_TRAIN_TIDY:=NO}
 : ${SYCL_TRAIN_INSTALL:=NO}
 : ${SYCL_TRAIN_RUN:=NO}
+: ${SYCL_TRAIN_RUN_ALL:=NO}
 : ${SYCL_TRAIN_RUN_EXAMPLE:=}
 
 # Read state variables created by `configure`.
@@ -64,6 +65,10 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -run_all)
+      SYCL_TRAIN_RUN_ALL="YES"
+      shift
+      ;;
     *)
       echo "Unknown option: $1"
       print_help
@@ -72,20 +77,26 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+err=0
+
 if [[ "${SYCL_TRAIN_FORMAT}" == "YES" ]]; then
   cmake --build ${SYCL_TRAIN_BUILD_DIR} --target format --parallel 4
+  err=$(( $err + $? ))
 fi
 
 if [[ "${SYCL_TRAIN_FORMAT_CHECK}" == "YES" ]]; then
   cmake --build ${SYCL_TRAIN_BUILD_DIR} --target format-check --parallel 4
+  err=$(( $err + $? ))
 fi
 
 if [[ "${SYCL_TRAIN_TIDY}" == "YES" ]]; then
   cmake --build ${SYCL_TRAIN_BUILD_DIR} --target tidy --parallel 4
+  err=$(( $err + $? ))
 fi
 
 if [[ "${SYCL_TRAIN_INSTALL}" == "YES" ]]; then
   cmake --build ${SYCL_TRAIN_BUILD_DIR} --target install --parallel 4
+  err=$(( $err + $? ))
 fi
 
 if [[ "${SYCL_TRAIN_RUN}" == "YES" ]]; then
@@ -95,6 +106,15 @@ if [[ "${SYCL_TRAIN_RUN}" == "YES" ]]; then
     exit 1
   fi
   $example
+  err=$(( $err + $? ))
 fi
 
-exit $?
+if [[ "${SYCL_TRAIN_RUN_ALL}" == "YES" ]]; then
+  for example in `ls ${SYCL_TRAIN_INSTALL_PREFIX}/bin/*`; do
+    echo "Running example: ${example}"
+    $example
+    err=$(( $err + $? ))
+  done
+fi
+
+exit $err
