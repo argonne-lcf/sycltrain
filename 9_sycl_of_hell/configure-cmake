@@ -79,3 +79,4 @@ cmake -B ${SYCL_TRAIN_BUILD_DIR} -S . \
 
 # Update variables required by the `9_sycl_of_hell` script.
 echo "SYCL_TRAIN_BUILD_DIR=${SYCL_TRAIN_BUILD_DIR}" >> ${SYCL_TRAIN_STATE_PATH}
+echo "SYCL_TRAIN_INSTALL_PREFIX=${SYCL_TRAIN_INSTALL_PREFIX}" >> ${SYCL_TRAIN_STATE_PATH}

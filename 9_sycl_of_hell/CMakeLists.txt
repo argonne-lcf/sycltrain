@@ -51,6 +51,8 @@ if (CLANG_FORMAT)
   add_custom_target(format-check
     COMMAND ${CLANG_FORMAT} --dry-run -Werror -i ${CMAKE_CURRENT_SOURCE_DIR}/*.[ch]pp
     COMMENT "Running clang-format check ...")
+else ()
+  message(WARNING "Couldn't find clang-format.")
 endif()
 
 # Configure .clang-tidy.in to generate .clang-tidy.
@@ -61,4 +63,6 @@ if (CLANG_TIDY)
   add_custom_target(tidy
     COMMAND ${CLANG_TIDY} -p ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.[ch]pp
     COMMENT "Running clang-tidy ...")
+else()
+  message(WARNING "Couldn't find clang-tidy.")
 endif()
