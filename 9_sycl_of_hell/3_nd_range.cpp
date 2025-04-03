@@ -1,5 +1,5 @@
 #include <sycl/sycl.hpp>
-
+#include "tprint.hpp"
 #include "argparse.hpp"
 
 int main(int argc, char **argv) {
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
                    const int group_rank = idx.get_group(0);
                    const int group_size = idx.get_group_range(0);
 
-                   sycl::ext::oneapi::experimental::printf(
+                   syclx::printf(
                        "Hello, World! World rank/size: %d/%d | Local "
                        "rank/size: %d/%d | Group "
                        "rank/size: %d/%d\n",

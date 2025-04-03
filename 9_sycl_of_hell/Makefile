@@ -1,6 +1,6 @@
 CXX ?= icpx
 CXXFLAGS ?= -fsycl
-INCFLAGS ?= -I../3rd_party
+INCFLAGS ?= -I../include
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))

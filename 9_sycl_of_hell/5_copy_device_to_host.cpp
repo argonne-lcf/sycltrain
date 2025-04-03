@@ -1,5 +1,4 @@
 #include <sycl/sycl.hpp>
-
 #include "argparse.hpp"
 
 int main(int argc, char **argv) {

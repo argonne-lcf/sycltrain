@@ -32,7 +32,7 @@ file(GLOB files "*.cpp")
 foreach(file_name ${files})
   get_filename_component(example_name ${file_name} NAME_WE)
   add_executable(${example_name} ${file_name})
-  target_include_directories(${example_name} PRIVATE ../3rd_party)
+  target_include_directories(${example_name} PRIVATE ../include)
   add_sycl_to_target(TARGET ${example_name} SOURCES ${file_name})
 
   if (HAS_ADDRESS_SANITIZER)
