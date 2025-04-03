@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
   // Allocate Memory to store the reduction
   int *s = sycl::malloc_shared<int>(1, Q);
   // Submit reduction kernel
-  Q.parallel_for(global_range, sycl::reduction(s, sycl::plus<int>()),
+  Q.parallel_for(global_range, sycl::reduction(s, 0, sycl::plus<int>()),
                  [=](auto id, auto &sum) { sum += static_cast<int>(id); })
       .wait();
   int s_expected = global_range * (global_range - 1) / 2;
