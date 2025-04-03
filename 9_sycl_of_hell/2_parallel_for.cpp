@@ -1,6 +1,7 @@
 #include <sycl/sycl.hpp>
-#include "tprint.hpp"
+
 #include "argparse.hpp"
+#include "tprint.hpp"
 
 int main(int argc, char **argv) {
   //  _                ___
@@ -36,8 +37,7 @@ int main(int argc, char **argv) {
   //   for(int idx=0; idx++; idx < global_range)
   Q.parallel_for(global_range, [=](sycl::id<1> idx) {
     // Explicit cast because of printf shenaningan.
-    syclx::printf("Hello, World! World rank %d\n",
-                                            static_cast<int>(idx));
+    syclx::printf("Hello, World! World rank %d\n", static_cast<int>(idx));
   });
   Q.wait();
 

@@ -1,22 +1,25 @@
 CXX ?= icpx
 CXXFLAGS ?= -fsycl
-INCFLAGS ?= -I../include -I../include/mdspan/
+INCFLAGS ?= -I../include
 
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
 RUN :=  $(addprefix run_, $(PRGS))
 
-.PHONY: run_all
-run_all: $(sort $(RUN))
-
 .PHONY: all
 all: $(PRGS)
+
+.PHONY: run_all
+run_all: $(sort $(RUN))
 
 %: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) -o $@ $^
 
-9_matrix_mul_mkl: 9_matrix_mul_mkl.cpp
-	-$(CXX) -o $@  $^ $(CXXFLAGS) -DMKL_ILP64 -qmkl
+2_gemm_onemath: 2_gemm_onemath.cpp
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) -qmkl -o $@ $^
+
+8_mdspan: 8_mdspan.cpp 
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) -I../include/mdspan -o $@ $^
 
 run_%:%
 	./$^

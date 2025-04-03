@@ -1,6 +1,7 @@
 #include <sycl/sycl.hpp>
-#include "tprint.hpp"
+
 #include "argparse.hpp"
+#include "tprint.hpp"
 
 int main(int argc, char **argv) {
   //  _                ___
