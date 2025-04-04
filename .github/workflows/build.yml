@@ -64,9 +64,17 @@ jobs:
         ./9_sycl_of_hell -install
         ./9_sycl_of_hell -run_all
 
-    - name: Make
+    - name: Make 9_sycl_of_hell
       if: ${{ !matrix.use_cmake }}
       working-directory: 9_sycl_of_hell
+      run: |
+        source /opt/intel/oneapi/setvars.sh
+        CXX=icpx make -j 4
+        make run_all
+
+    - name: Make advanced_inferno/
+      if: ${{ !matrix.use_cmake }}
+      working-directory: advanced_inferno
       run: |
         source /opt/intel/oneapi/setvars.sh
         CXX=icpx make -j 4
