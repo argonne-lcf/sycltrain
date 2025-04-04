@@ -1,20 +1,6 @@
 #include <charconv>
 
 namespace {
-template <typename T, typename... Args> void format_d(char *str, T value) {
-  // Handle zero case
-  if (value == 0) {
-    *str++ = '0';
-    return;
-  }
-
-  // Convert integer to string using std::to_chars.
-  // This may overflow, and all the good stuff.
-  auto [ptr, ec] = std::to_chars(str, str + 32, value);
-  if (ec == std::errc()) {
-    str = ptr;
-  }
-}
 
 // Base case for recursion
 int my_sprintf(char *str, const char *format) {
@@ -34,8 +20,39 @@ int my_sprintf(char *str, const char *format, T value, Args... args) {
   while (*format) {
     // Handle the %d format for integers
     if (*format == '%' && *(format + 1) == 'd') {
-      format += 2; // Skip the %d
-      format_d(str, value);
+      format += 2;  // Skip the %d
+      // Adative cpp bug
+      // If we put this code block in a template function
+      //   template <typename T> void format_d(char *str, T value) {
+      // the function will not be called, so we inline it
+
+      // Handle zero case
+      if (value == 0) {
+        *str++ = '0';
+      } else {
+        // Count digits
+        int num_digits = 0;
+        T temp = value;
+        while (temp > 0) {
+          num_digits++;
+          temp /= 10;
+        }
+
+        // Position pointer at the end of the number
+        char *digit_position = str + num_digits;
+        char *current = digit_position;
+
+        // Write digits in reverse order
+        temp = value;
+        while (temp > 0) {
+          *--current = '0' + (temp % 10);
+          temp /= 10;
+        }
+
+        // Move string pointer forward
+        str = digit_position;
+      }
+
       // Process the rest of the string with remaining args
       return (str - start) + my_sprintf(str, format, args...);
     } else {
@@ -46,16 +63,17 @@ int my_sprintf(char *str, const char *format, T value, Args... args) {
   *str = '\0';
   return str - start;
 }
-}
+}  // namespace
 
 namespace syclx {
-template <typename... Args> void printf(const char *format, Args... args) {
-  #ifdef __ACPP__
+template <typename... Args>
+void printf(const char *format, Args... args) {
+#ifdef __ACPP__
   char buffr[256];
   my_sprintf(buffr, format, args...);
-  sycl::detail::print(buf);
-  #else
+  sycl::detail::print(buffr);
+#else
   sycl::ext::oneapi::experimental::printf(format, args...);
-  #endif
+#endif
 }
-}
+}  // namespace syclx
