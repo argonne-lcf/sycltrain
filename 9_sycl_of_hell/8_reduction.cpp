@@ -36,10 +36,17 @@ int main(int argc, char **argv) {
   // Allocate Memory to store the reduction
   int *s = sycl::malloc_shared<int>(1, Q);
   // Submit reduction kernel
-  Q.parallel_for(global_range, sycl::reduction(s, 0, sycl::plus<int>()),
-                 [=](auto id, auto &sum) { sum += static_cast<int>(id); })
+  Q.parallel_for(
+       global_range,
+       sycl::reduction(s,                  // Memory who will be updated
+                       sycl::plus<int>(),  // Binary operation combinator
+                       // Self explinatory,
+                       // The initial value of the reduction variable is
+                       // included in the reduction operation
+                       sycl::property::reduction::initialize_to_identity()),
+       [=](auto id, auto &sum) { sum += static_cast<int>(id); })
       .wait();
-  int s_expected = global_range * (global_range - 1) / 2;
+  const int s_expected = global_range * (global_range - 1) / 2;
 
   std::cout << "Expected sum: " << s_expected << " | Computed sum: " << *s
             << std::endl;
