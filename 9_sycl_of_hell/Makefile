@@ -1,5 +1,5 @@
 CXX ?= icpx
-CXXFLAGS ?= -fsycl
+CXXFLAGS ?= -std=c++17 -fsycl
 INCFLAGS ?= -I../include
 
 SRCS := $(wildcard *.cpp)
