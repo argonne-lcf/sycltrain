@@ -74,6 +74,6 @@ int main(int argc, char **argv) {
     std::cout << "Fail" << std::endl;
     return 1;
   }
-  std::cout << "Sucess" << std::endl;
+  std::cout << "Success" << std::endl;
   return 0;
 }

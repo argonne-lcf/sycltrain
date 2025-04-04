@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
             << " in a round robin maner on " << n_queues << " " << q_types
             << " queues" << std::endl;
 
-  // Shoud use KHR, default context
+  // Should use KHR, default context
   const sycl::device D;
   const sycl::context C(D);
 
