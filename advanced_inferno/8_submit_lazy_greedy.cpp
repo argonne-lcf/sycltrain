@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
   std::cout << "Sentinel Value: " << *ptr << std::endl;
   if (*ptr == 1)
-    std::cout << "Gready Execution" << std::endl;
-  else
     std::cout << "Lazy Execution" << std::endl;
+  else
+    std::cout << "Greedy Execution" << std::endl;
 }
