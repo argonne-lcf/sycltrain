@@ -15,10 +15,10 @@ run_all: $(sort $(RUN))
 %: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) -o $@ $^
 
-2_gemm_onemath: 2_gemm_onemath.cpp
+%_gemm_onemath: %_gemm_onemath.cpp
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) -qmkl -o $@ $^
 
-8_mdspan: 8_mdspan.cpp 
+%_mdspan: %_mdspan.cpp
 	$(CXX) $(CXXFLAGS) $(INCFLAGS) -I../include/mdspan -o $@ $^
 
 run_%:%
