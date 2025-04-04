@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
   std::vector<float, decltype(allocator)> A(global_range, allocator);
   std::iota(A.begin(), A.end(), 0);
 
-  // Don't use raw point, you can use span now
+  // Don't use raw pointer, you can use span now
   auto *A_p = A.data();
   Q.parallel_for(global_range, [=](sycl::id<1> idx) {
      A_p[idx] += idx;
