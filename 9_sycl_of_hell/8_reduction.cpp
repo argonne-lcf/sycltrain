@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
        global_range,
        sycl::reduction(s,                  // Memory who will be updated
                        sycl::plus<int>(),  // Binary operation combinator
-                       // Self explinatory,
+                       // Self explanatory,
                        // The initial value of the reduction variable is
                        // included in the reduction operation
                        sycl::property::reduction::initialize_to_identity()),

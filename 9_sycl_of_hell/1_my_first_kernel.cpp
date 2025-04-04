@@ -22,7 +22,7 @@ int main() {
   // Submit one work item (a single task) to the GPU using the previous lambda
   // Queue submission are asyncrhonous (similar to OpenMP nowait)
   Q.single_task(f);
-  // We wait for all the commands submited to the queue to complete
+  // We wait for all the commands submitted to the queue to complete
   // In this case only one
   Q.wait();
   return 0;
