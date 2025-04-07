@@ -92,8 +92,8 @@ jobs:
       shell: bash
       run: |
         wget https://apt.llvm.org/llvm.sh #Convenience script that sets up the repositories
-        sudo bash ./llvm.sh 16 #Set up repositories for clang 16
-        sudo apt install -y libboost-all-dev libclang-dev clang-tools libomp-dev llvm-dev lld
+        sudo bash ./llvm.sh all  #Set up repositories for clang 16
+        #sudo apt install -y libboost-all-dev libclang-dev clang-tools libomp-dev llvm-dev lld
     - name: Install
       run: |
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
@@ -101,7 +101,7 @@ jobs:
         mkdir build && cd build
         echo `which clang`
         ls `which clang`/..
-        cmake -DCLANG_EXECUTABLE_PATH=`which clang` -DCMAKE_INSTALL_PREFIX=$HOME -DLLVM_DIR= ..
+        cmake -DCLANG_EXECUTABLE_PATH=`which clang` -DCMAKE_INSTALL_PREFIX=$HOME .. #-DLLVM_DIR= ..
         make install
     - name: Make 9_sycl_of_hell
       if: ${{ !matrix.use_cmake }}
