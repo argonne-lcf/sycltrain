@@ -92,8 +92,8 @@ jobs:
       shell: bash
       run: |
         wget https://apt.llvm.org/llvm.sh #Convenience script that sets up the repositories
-        bash ./llvm.sh 16 #Set up repositories for clang 16
-        apt install -y libclang-16-dev clang-tools-16 libomp-16-dev llvm-16-dev lld-16
+        sudo bash ./llvm.sh 16 #Set up repositories for clang 16
+        sudo apt install -y libclang-16-dev clang-tools-16 libomp-16-dev llvm-16-dev lld-16
     - name: Install
       run: |
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
