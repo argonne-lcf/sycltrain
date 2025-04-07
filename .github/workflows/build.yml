@@ -92,7 +92,7 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt cmake libboost-all-dev
+        sudo apt install cmake libboost-all-dev
     - name: Install
       run: |
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
