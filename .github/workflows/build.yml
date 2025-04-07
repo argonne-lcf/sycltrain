@@ -18,14 +18,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "[Ubuntu] Intel/LLVM"
-            os: ubuntu-latest
+          - name: "Intel/LLVM Make"
             use_cmake: false
-          - name: "[Ubuntu] CMake + Intel/LLVM"
-            os: ubuntu-latest
+          - name: "Intel/LLVM CMake"
             use_cmake: true
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     name: ${{ matrix.name }}
 
     steps:
@@ -44,9 +42,7 @@ jobs:
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
 
-    - name: install Intel oneAPI dpcpp compiler
-      shell: bash
-      run: |
+    - run : |
         sudo apt update
         sudo apt install intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
@@ -83,3 +79,35 @@ jobs:
     - name: Block to allow inspecting failures
       run: sleep 1800
       if: ${{ failure() && inputs.debug_enabled }}
+
+  acpp:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install deps
+      shell: bash
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        sudo bash ./llvm.sh 19
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libclang-19-dev clang-tools-19 libomp-19-dev llvm-19-dev lld-19 libboost-fiber-dev libboost-context-dev
+    - uses: actions/cache@v4
+      id: acpp
+      with:
+        path: ~/acpp/
+        key: ${{ runner.os }}-build-cache-acpp
+    - name: Install
+      if: steps.acpp.outputs.cache-hit != 'true'
+      run: |
+        git clone https://github.com/AdaptiveCpp/AdaptiveCpp
+        cd AdaptiveCpp
+        mkdir build && cd build
+        cmake -DCMAKE_INSTALL_PREFIX=$HOME/acpp -DLLVM_DIR=/usr/lib/llvm-19/cmake/ ..
+        make install -j 4
+    - name: Make 9_sycl_of_hell
+      working-directory: 9_sycl_of_hell
+      run: |
+        CXX=$HOME/acpp/bin/acpp CXXFLAGS=-O2 make -j 4
+        make run_all
+
