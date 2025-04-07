@@ -92,7 +92,7 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install llvm-dev cmake libboost-all-dev libomp-dev libomp5 
+        sudo apt install llvm-dev libclang-dev cmake libboost-all-dev libomp-dev
     - name: Install
       run: |
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
