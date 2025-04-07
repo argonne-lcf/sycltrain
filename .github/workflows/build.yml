@@ -42,11 +42,9 @@ jobs:
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
 
-    - name: install Intel oneAPI dpcpp compiler
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
     - name: Set oneAPI environment variables
       shell: bash
@@ -91,8 +89,9 @@ jobs:
       run: |
         wget https://apt.llvm.org/llvm.sh
         sudo bash ./llvm.sh 19
-        sudo apt install -y libclang-19-dev clang-tools-19 libomp-19-dev llvm-19-dev lld-19
-        sudo apt install -y libboost-fiber-dev libboost-context-dev
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libclang-19-dev clang-tools-19 libomp-19-dev llvm-19-dev lld-19 libboost-fiber-dev libboost-context-dev
     - uses: actions/cache@v4
       id: acpp
       with:
