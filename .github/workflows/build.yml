@@ -44,7 +44,7 @@ jobs:
 
     - run : |
         sudo apt update
-        sudo apt get intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
+        sudo apt install intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
     - name: Set oneAPI environment variables
       shell: bash
