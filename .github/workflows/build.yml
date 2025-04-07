@@ -99,9 +99,7 @@ jobs:
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
         cd AdaptiveCpp
         mkdir build && cd build
-        echo `which clang`
-        ls `which clang`/..
-        cmake -DCLANG_EXECUTABLE_PATH=`which clang` -DCMAKE_INSTALL_PREFIX=$HOME .. #-DLLVM_DIR= ..
+        cmake -DCLANG_EXECUTABLE_PATH=`which clang++` -DCMAKE_INSTALL_PREFIX=$HOME .. #-DLLVM_DIR= ..
         make install
     - name: Make 9_sycl_of_hell
       if: ${{ !matrix.use_cmake }}
