@@ -98,6 +98,7 @@ jobs:
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
         cd AdaptiveCpp
         mkdir build && cd build
+        export CXX=clang++
         cmake -DCMAKE_INSTALL_PREFIX=$HOME ..
         make install
     - name: Make 9_sycl_of_hell
