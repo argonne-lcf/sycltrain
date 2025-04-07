@@ -91,10 +91,10 @@ jobs:
     - name: install deps
       shell: bash
       run: |
-        wget https://apt.llvm.org/llvm.sh 
-        sudo bash ./llvm.sh 19 
+        wget https://apt.llvm.org/llvm.sh
+        sudo bash ./llvm.sh 19
         sudo apt install -y libclang-19-dev clang-tools-19 libomp-19-dev llvm-19-dev lld-19
-        sudo apt install -y  libboost-fiber-dev libboost-context-dev 
+        sudo apt install -y libboost-fiber-dev libboost-context-dev
     - uses: actions/cache@v4
       id: acpp
       with:
@@ -107,11 +107,10 @@ jobs:
         cd AdaptiveCpp
         mkdir build && cd build
         cmake -DCMAKE_INSTALL_PREFIX=$HOME/acpp -DLLVM_DIR=/usr/lib/llvm-19/cmake/ ..
-        make install
+        make install -j 4
     - name: Make 9_sycl_of_hell
-      if: ${{ !matrix.use_cmake }}
       working-directory: 9_sycl_of_hell
       run: |
-        CXX=$HOME/bin/acpp CXXFLAGS='-O2'  make -j 4
+        CXX=$HOME/acpp/bin/acpp CXXFLAGS='-O2'  make -j 4
         make run_all
 
