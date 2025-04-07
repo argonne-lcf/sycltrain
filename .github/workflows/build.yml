@@ -83,3 +83,26 @@ jobs:
     - name: Block to allow inspecting failures
       run: sleep 1800
       if: ${{ failure() && inputs.debug_enabled }}
+
+  adapticecpp:
+    steps:
+    - uses: actions/checkout@v4
+    - name: install deps
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt cmake libboost-all-dev
+    - name: Install
+      run: |
+        git clone https://github.com/AdaptiveCpp/AdaptiveCpp
+        cd AdaptiveCpp
+        mkdir build && cd build
+        cmake -DCMAKE_INSTALL_PREFIX=$HOME ..
+        make install
+    - name: Make 9_sycl_of_hell
+      if: ${{ !matrix.use_cmake }}
+      working-directory: 9_sycl_of_hell
+      run: |
+        CXX=$HOME/adpcpp make -j 4
+        make run_all
+
