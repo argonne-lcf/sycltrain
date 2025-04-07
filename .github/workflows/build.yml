@@ -93,7 +93,7 @@ jobs:
       run: |
         #wget https://apt.llvm.org/llvm.sh #Convenience script that sets up the repositories
         #sudo bash ./llvm.sh 16 #Set up repositories for clang 16
-        sudo apt install -y libclang-dev clang-tools libomp-dev llvm-dev lld
+        sudo apt install -y libboost-all-dev libclang-dev clang-tools libomp-dev llvm-dev lld
     - name: Install
       run: |
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
