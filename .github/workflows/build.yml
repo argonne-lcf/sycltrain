@@ -18,14 +18,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "[Ubuntu] Intel/LLVM"
-            os: ubuntu-latest
+          - name: "Intel/LLVM Make"
             use_cmake: false
-          - name: "[Ubuntu] CMake + Intel/LLVM"
-            os: ubuntu-latest
+          - name: "Intel/LLVM CMake"
             use_cmake: true
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     name: ${{ matrix.name }}
 
     steps:
@@ -111,6 +109,6 @@ jobs:
     - name: Make 9_sycl_of_hell
       working-directory: 9_sycl_of_hell
       run: |
-        CXX=$HOME/acpp/bin/acpp CXXFLAGS='-O2'  make -j 4
+        CXX=$HOME/acpp/bin/acpp CXXFLAGS=-O2 make -j 4
         make run_all
 
