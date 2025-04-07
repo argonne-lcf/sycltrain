@@ -92,8 +92,9 @@ jobs:
       shell: bash
       run: |
         wget https://apt.llvm.org/llvm.sh 
-        sudo bash ./llvm.sh 19  
-        sudo apt install -y  libboost-fiber-dev libboost-context-dev
+        sudo bash ./llvm.sh 19 
+        apt install -y libclang-19-dev clang-tools-19 libomp-19-dev llvm-19-dev lld-19
+        sudo apt install -y  libboost-fiber-dev libboost-context-dev 
     - uses: actions/cache@v4
       id: acpp
       with:
