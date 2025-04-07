@@ -1,5 +1,5 @@
-#include <experimental/mdspan>
 #include <sycl/sycl.hpp>
+#include <experimental/mdspan>
 
 #include "argparse.hpp"
 

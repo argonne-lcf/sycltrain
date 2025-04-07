@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   std::cout << "Submiting Kernel who will set the sentinel to 1" << std::endl;
   Q.single_task([=]() {
     sycl::atomic_ref<int, sycl::memory_order_acq_rel,
-                     sycl::memory_scope::device>(*ptr)
+                     sycl::memory_scope::system>(*ptr)
         .store(1);
   });
 
