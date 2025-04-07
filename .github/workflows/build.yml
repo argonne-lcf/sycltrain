@@ -84,27 +84,34 @@ jobs:
       run: sleep 1800
       if: ${{ failure() && inputs.debug_enabled }}
 
-  adapticecpp:
+  acpp:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: install deps
       shell: bash
       run: |
-        wget https://apt.llvm.org/llvm.sh #Convenience script that sets up the repositories
-        sudo bash ./llvm.sh all  #Set up repositories for clang 16
-        sudo apt install -y libboost-all-dev #libclang-dev clang-tools libomp-dev llvm-dev lld
+        wget https://apt.llvm.org/llvm.sh 
+        sudo bash ./llvm.sh 19  
+        sudo apt install -y  libboost-fiber-dev libboost-context-dev
+    - uses: actions/cache@v4
+    - name: Cache acpp
+      id: acpp
+      with:
+        path: ~/acpp/
+        key: ${{ runner.os }}-build-cache-acpp
     - name: Install
+      if: steps.acpp.outputs.cache-hit != 'true'
       run: |
         git clone https://github.com/AdaptiveCpp/AdaptiveCpp
         cd AdaptiveCpp
         mkdir build && cd build
-        cmake -DCLANG_EXECUTABLE_PATH=`which clang++` -DCMAKE_INSTALL_PREFIX=$HOME .. #-DLLVM_DIR= ..
+        cmake -DCMAKE_INSTALL_PREFIX=$HOME/acpp -DLLVM_DIR=/usr/lib/llvm-19/cmake/ ..
         make install
     - name: Make 9_sycl_of_hell
       if: ${{ !matrix.use_cmake }}
       working-directory: 9_sycl_of_hell
       run: |
-        CXX=$HOME/adpcpp make -j 4
+        CXX=$HOME/bin/acpp CXXFLAGS='-O2'  make -j 4
         make run_all
 
