@@ -42,7 +42,7 @@ jobs:
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
 
-      run : |
+    - run : |
         sudo apt get update
         sudo apt get intel-oneapi-compiler-dpcpp-cpp intel-oneapi-mkl-devel
 
