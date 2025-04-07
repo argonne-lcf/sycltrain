@@ -1,5 +1,6 @@
-#include <sycl/sycl.hpp>
 #include <experimental/mdspan>
+#include <sycl/sycl.hpp>
+
 #include "argparse.hpp"
 
 int main(int argc, char **argv) {

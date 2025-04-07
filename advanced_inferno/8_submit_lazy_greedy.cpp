@@ -18,7 +18,12 @@ int main(int argc, char **argv) {
 
   *ptr = 0;
   std::cout << "Submiting Kernel who will set the sentinel to 1" << std::endl;
-  Q.single_task([=]() { *ptr = 1; });
+  Q.single_task([=]() {
+    sycl::atomic_ref<int, sycl::memory_order_acq_rel,
+                     sycl::memory_scope::device>(*ptr)
+        .store(1);
+  });
+
   std::cout << "Sleep 4 times the estimated durations of the kernel"
             << std::endl;
   std::this_thread::sleep_for(elapsed * 4);

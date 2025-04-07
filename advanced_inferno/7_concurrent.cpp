@@ -107,10 +107,9 @@ int main(int argc, char **argv) {
       // Launch all kernels
       for (int i = 0; i < n_kernels; i++) {
         sycl::queue Q = Qs[i % n_queues];
-        Q.parallel_for(sycl::range{1},
-                       [=](sycl::id<1> j) {
-                         ptr[i] = busy_wait(kernel_tripcount, (double)j);
-                       });
+        Q.parallel_for(sycl::range{1}, [=](sycl::id<1> j) {
+          ptr[i] = busy_wait(kernel_tripcount, (double)j);
+        });
       }
       // Sync
       for (auto &Q : Qs) Q.wait();
