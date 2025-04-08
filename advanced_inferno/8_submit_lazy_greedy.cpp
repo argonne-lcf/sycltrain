@@ -10,20 +10,20 @@ int main(int argc, char **argv) {
   auto *ptr = sycl::malloc_shared<int>(1, Q);
   *ptr = 0;
 
+  auto f = [=]() {
+    sycl::atomic_ref<int, sycl::memory_order_acq_rel,
+                     sycl::memory_scope::system>(*ptr)
+        .store(1);
+  };
   const auto start = std::chrono::high_resolution_clock::now();
-  Q.single_task([=]() { *ptr = 1; });
+  Q.single_task(f);
   Q.wait();
   const auto end = std::chrono::high_resolution_clock::now();
   const std::chrono::duration<double, std::micro> elapsed = (end - start);
 
   *ptr = 0;
   std::cout << "Submiting Kernel who will set the sentinel to 1" << std::endl;
-  Q.single_task([=]() {
-    sycl::atomic_ref<int, sycl::memory_order_acq_rel,
-                     sycl::memory_scope::system>(*ptr)
-        .store(1);
-  });
-
+  Q.single_task(f);
   std::cout << "Sleep 4 times the estimated durations of the kernel"
             << std::endl;
   std::this_thread::sleep_for(elapsed * 4);
