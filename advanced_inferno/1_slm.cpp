@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sycl/sycl.hpp>
+#include "argparse.hpp"
 
 int main(int argc, char **argv) {
   //  _                ___
@@ -53,8 +54,8 @@ int main(int argc, char **argv) {
          sycl::nd_range<1>(global_range, local_range), [=](sycl::nd_item<1> i) {
            int x = i.get_global_linear_id();
            int y = i.get_local_linear_id();
-           tmp_wg[y] = (A_ptr[std::clamp(0, (x - 1), WORKSIZE)] + A_ptr[x] +
-                     A_ptr[std::clamp(0, (x + 1), WORKSIZE)]);
+           tmp_wg[y] = (A_ptr[std::clamp(0, (x - 1), local_range)] + A_ptr[x] +
+                     A_ptr[std::clamp(0, (x + 1), local_range)]);
            i.barrier();
            A_ptr[x] = tmp_wg[y];
          });
