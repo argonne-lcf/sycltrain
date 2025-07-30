@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
   // 0 1 2 ...
   // 0 1 2 ...
   // https://github.com/ParRes/Kernels/blob/main/Cxx11/dgemm-onemkl.cc
-  for (int i = 0; i < order; i++) {
-    for (int j = 0; j < order; j++) {
+  for (size_t i = 0; i < order; i++) {
+    for (size_t j = 0; j < order; j++) {
       A[i * order + j] = i;
       B[i * order + j] = i;
       C[i * order + j] = 0;

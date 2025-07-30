@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
   const sycl::context C(D);
 
   std::vector<sycl::queue> Qs;
-  for (size_t i = 0; i < n_queues; i++) Qs.push_back(sycl::queue(C, D, pl));
+  for (int i = 0; i < n_queues; i++) Qs.push_back(sycl::queue(C, D, pl));
   // Pointer to store the value, so compiler doesn't optimize away
   auto *ptr = sycl::malloc_device<double>(n_kernels, D, C);
 

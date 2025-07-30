@@ -3,7 +3,7 @@
 
 #include "argparse.hpp"
 
-int main(int argc, char **argv) {
+int main() {
   //
   //   |\/|  _|    _ ._   _. ._
   //   |  | (_|   _> |_) (_| | |

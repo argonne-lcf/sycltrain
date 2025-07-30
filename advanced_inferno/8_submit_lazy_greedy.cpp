@@ -3,7 +3,7 @@
 #include <sycl/sycl.hpp>
 #include <thread>
 
-int main(int argc, char **argv) {
+int main() {
   sycl::queue Q;
   auto *ptr = sycl::malloc_shared<int>(1, Q);
   auto f = [=]() {

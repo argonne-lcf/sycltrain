@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
       std::bind(f_copy, std::placeholders::_1, global_range, bufferA, bufferC));
 
   sycl::host_accessor AccA{bufferA, sycl::read_only};
-  for (size_t i = 0; i < global_range; i++) {
+  for (int i = 0; i < (int) global_range; i++) {
     assert(AccA[i] == i + 3);
     std::cout << "A[ " << i << " ] = " << AccA[i] << std::endl;
   }
