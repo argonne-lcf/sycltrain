@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   Q.wait();
   sycl::free(A, Q);
 
-  for (size_t i = 0; i < global_range; i++)
+  for (int i = 0; i < global_range; i++)
     std::cout << "A_host[ " << i << " ] = " << A_host[i] << std::endl;
   return 0;
 }

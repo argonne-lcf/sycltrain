@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
   Q.parallel_for(global_range, [=](auto id) { A[id] = id; });
   Q.wait();
   // Use Memory on the Host
-  for (size_t i = 0; i < global_range; i++)
+  for (int i = 0; i < global_range; i++)
     std::cout << "A[ " << i << " ] = " << A[i] << std::endl;
   sycl::free(A, Q);
   return 0;

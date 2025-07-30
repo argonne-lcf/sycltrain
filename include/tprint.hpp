@@ -1,5 +1,7 @@
 #include <charconv>
 
+#ifdef __ACPP__
+
 namespace {
 
 // Base case for recursion
@@ -64,6 +66,7 @@ int my_sprintf(char *str, const char *format, T value, Args... args) {
   return str - start;
 }
 }  // namespace
+#endif
 
 namespace syclx {
 template <typename... Args>
